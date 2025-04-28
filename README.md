@@ -8,7 +8,7 @@
   </a>
 </p>
 
-# Kowabunga
+# About
 
 This is **Kowabunga**, a complete infrastructure automation suite to orchestrate virtual resources management automation on privately-owned commodity hardware.
 
