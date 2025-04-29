@@ -17,6 +17,4 @@ jobs:
         with:
           go-version: 1.24
       - name: Run Gosec Security Scanner
-        uses: securego/gosec@master
-        with:
-          args: '-terse -exclude=G101,G115 ./...'
+        run: make sec
