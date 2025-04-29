@@ -171,7 +171,7 @@ build: kahuna kaktus kawaii kiwi konvey plugin-ceph
 
 .PHONY: tests
 tests: ; $(info $(M) testing Kowabunga suite…) @
-	$Q go test ./... -count=1
+	$Q go test ./... -count=1 -coverprofile=coverage.txt
 
 .PHONY: deb
 deb: ; $(info $(M) building debian package…) @ ## Build debian package

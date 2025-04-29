@@ -23,3 +23,4 @@ package-lock.json
 package.json
 yarn.lock
 openapitools.json
+coverage.txt
