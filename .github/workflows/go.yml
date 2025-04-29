@@ -1,0 +1,33 @@
+name: Kowabunga Go package build and test
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install package dependencies
+        run: sudo apt-get install -y debhelper librados-dev librbd-dev gcc
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24
+      - name: Build server-side SDK
+        run: make sdk
+      - name: Install dependencies
+        run: make mod
+      - name: Format code
+        run: make fmt
+      - name: Code Acceptance
+        run: make vet
+      - name: Linter
+        run: make lint
+      - name: Build
+        run: make build
+      - name: Tests
+        run: make tests
+      - name: Secure code
+        run: make sec
+      - name: Vulnerability checks
+        run: make vuln
