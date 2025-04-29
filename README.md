@@ -13,8 +13,13 @@
 This is **Kowabunga**, a complete infrastructure automation suite to orchestrate virtual resources management automation on privately-owned commodity hardware.
 
 [![License: Apache License, Version 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
-[![go.dev](https://img.shields.io/badge/go.dev-pkg-007d9c.svg?style=flat)](https://pkg.go.dev/github.com/kowabunga-cloud/kowabunga)
 [![Build Status](https://github.com/kowabunga-cloud/kowabunga/actions/workflows/go.yml/badge.svg)](https://github.com/kowabunga-cloud/kowabunga/actions/workflows/go.yml)
+[![Coverage Status](https://codecov.io/gh/kowabunga-cloud/kowabunga/branch/master/graph/badge.svg)](https://codecov.io/gh/kowabunga-cloud/kowabunga)
+[![GoReport](https://goreportcard.com/badge/github.com/kowabunga-cloud/kowabunga)](https://goreportcard.com/report/github.com/kowabunga-cloud/kowabunga)
+[![GoCode](https://img.shields.io/badge/go.dev-pkg-007d9c.svg?style=flat)](https://pkg.go.dev/github.com/kowabunga-cloud/kowabunga)
+[![time tracker](https://wakatime.com/badge/gtihub/kowabunga-cloud/kowabunga.svg)](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga)
+![Code lines](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=code)
+![Comments](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=comments)
 
 This repository features the server-side bits of Kowabunga, including:
 
