@@ -34,7 +34,7 @@ GOVULNCHECK = $(BINDIR)/govulncheck
 GOVULNCHECK_VERSION = v1.1.4
 
 GOSEC = $(BINDIR)/gosec
-GOSEC_VERSION = v2.22.2
+GOSEC_VERSION = v2.22.3
 
 PKGS = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME))
 
