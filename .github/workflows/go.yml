@@ -25,7 +25,3 @@ jobs:
         run: make build
 #      - name: Tests
 #        run: make tests
-      - name: Secure code
-        run: make sec
-      - name: Vulnerability checks
-        run: make vuln

@@ -1,0 +1,21 @@
+name: Kowabunga Vulnerabilities Check
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  govulncheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24
+      - id: govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+           go-version-input: 1.24.2
+           go-package: ./...
