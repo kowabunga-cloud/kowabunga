@@ -36,7 +36,8 @@ GOVULNCHECK_VERSION = v1.1.4
 GOSEC = $(BINDIR)/gosec
 GOSEC_VERSION = v2.22.3
 
-PKGS = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME) | sed 's%github.com/kowabunga-cloud/kowabunga/%%')
+PKGS = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME))
+PKGS_SHORT = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME) | sed 's%github.com/kowabunga-cloud/kowabunga/%%')
 
 V = 0
 Q = $(if $(filter 1,$V),,@)
@@ -206,7 +207,7 @@ vet: ; $(info $(M) running go vet…) @
 
 .PHONY: fmt
 fmt: ; $(info $(M) running go fmt…) @
-	$Q gofmt -w -s $(PKGS)
+	$Q gofmt -w -s $(PKGS_SHORT)
 
 .PHONY: clean
 clean: ; $(info $(M) cleaning…)	@ ## Cleanup everything
