@@ -64,7 +64,7 @@ endif
 # it do all the steps required to build the debian package or docker image
 # it does not build/run the tests
 .PHONY: all
-all: sdk mod fmt vet lint build ; @ ## Do all
+all: mod fmt vet lint build ; @ ## Do all
 	$Q echo "done"
 
 .PHONY: get-yarn
@@ -79,7 +79,8 @@ get-openapi-generator: get-yarn ;$(info $(M) [Yarn] installing openapi-generator
 # Generates server-side SDK from OpenAPI specification
 .PHONY: sdk
 sdk: get-openapi-generator ; $(info $(M) generate server-side SDK from OpenAPI specifications…) @
-	$Q test -x "$(SRC_DIR)/$(SDK_PACKAGE_NAME)" || $(OPENAPI_GENERATOR) generate \
+	$Q git rm -qrf $(SRC_DIR)/$(SDK_PACKAGE_NAME) || true
+	$Q $(OPENAPI_GENERATOR) generate \
 	  -g $(SDK_GENERATOR) \
 	  --package-name $(SDK_PACKAGE_NAME) \
 	  --openapi-normalizer KEEP_ONLY_FIRST_TAG_IN_OPERATION=true \
@@ -92,6 +93,7 @@ sdk: get-openapi-generator ; $(info $(M) generate server-side SDK from OpenAPI s
 	$Q rm -f $(SRC_DIR)/.openapi-generator-ignore
 	$Q rm -rf $(SRC_DIR)/.openapi-generator
 	$Q rm -rf $(SRC_DIR)/api
+	$Q git add "$(SRC_DIR)/$(SDK_PACKAGE_NAME)"
 
 # This target grabs the necessary go modules
 .PHONY: mod
@@ -215,7 +217,6 @@ clean: ; $(info $(M) cleaning…)	@ ## Cleanup everything
 	$Q rm -f package.json
 	$Q rm -f yarn.lock
 	$Q rm -f openapitools.json
-	$Q rm -rf $(SRC_DIR)/$(SDK_PACKAGE_NAME)
 
 # This target parse this makefile and extract special comments to build a help
 .PHONY: help

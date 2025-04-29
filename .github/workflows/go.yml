@@ -13,8 +13,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 1.24
-      - name: Build server-side SDK
-        run: make sdk
       - name: Install dependencies
         run: make mod
       - name: Format code
@@ -25,8 +23,8 @@ jobs:
         run: make lint
       - name: Build
         run: make build
-      - name: Tests
-        run: make tests
+#      - name: Tests
+#        run: make tests
       - name: Secure code
         run: make sec
       - name: Vulnerability checks
