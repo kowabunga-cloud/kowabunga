@@ -174,10 +174,6 @@ tests: ; $(info $(M) testing Kowabunga suite…) @
 deb: ; $(info $(M) building debian package…) @ ## Build debian package
 	$Q VERSION=$(VERSION) ./debian.sh
 
-.PHONY: publish
-publish: ; $(info $(M) publishing debian package…) @ ## Publish debian package
-	$Q VERSION=$(VERSION) ./publish.sh
-
 .PHONY: get-lint
 get-lint: ; $(info $(M) downloading go-lint…) @
 	$Q test -x $(GOLINT) || sh -c $(GOLINT) --version 2> /dev/null| grep $(GOLINT_VERSION)  || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s $(GOLINT_VERSION)
