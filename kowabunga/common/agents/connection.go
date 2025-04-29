@@ -62,7 +62,7 @@ func (agent *KowabungaAgent) Run() {
 	signal.Notify(agent.shutdown, syscall.SIGINT, syscall.SIGTERM)
 
 	// Try forever to establish WebSocket agent connection to Kowabunga remote orchestrator.
-	// Anything happens on remote-side, we'll keep on trying unless explicitely requested to stop
+	// Anything happens on remote-side, we'll keep on trying unless explicitly requested to stop
 	// through user signal interrupt
 	for {
 		agent.wg.Add(1)

@@ -202,7 +202,7 @@ func (vr *virtualRouter) MasterMode() {
 				klog.Errorf("VR %d: Could not send advertisement", vr.ID)
 			}
 		case packet := <-vr.packet:
-			klog.Debugf("Virtual router %d : recieved vrrp packet", vr.ID)
+			klog.Debugf("Virtual router %d : received vrrp packet", vr.ID)
 			if packet.Priority == 0 {
 				err := vr.sendAdvertisements()
 				if err != nil {

@@ -255,7 +255,7 @@ func (har *HighlyAvailableResource) RequestPrivateVIP() error {
 }
 
 func (har *HighlyAvailableResource) GetVirtualIP() {
-	// perform various checks before going any futher ...
+	// perform various checks before going any further ...
 	privateInterface := fmt.Sprintf("%s%d", AdapterOsNicLinuxPrefix, AdapterOsNicLinuxStartIndex+1)
 	privateSubnet, err := FindSubnetByID(har.PrivateSubnetID)
 	if err != nil {

@@ -107,7 +107,7 @@ func (s *ProjectService) CreateProjectZoneInstance(ctx context.Context, projectI
 		return HttpQuota(nil)
 	}
 
-	// ensure instance does not already exists (globally, accross all projects)
+	// ensure instance does not already exists (globally, across all projects)
 	_, err = FindInstanceByName(instance.Name)
 	if err == nil {
 		return HttpConflict(err)
@@ -189,7 +189,7 @@ func (s *ProjectService) CreateProjectZoneKompute(ctx context.Context, projectId
 		return HttpNotFound(err)
 	}
 
-	// ensure instance does not already exists (globally, accross all projects), this would validate auto-named volumes as well
+	// ensure instance does not already exists (globally, across all projects), this would validate auto-named volumes as well
 	_, err = FindInstanceByName(kompute.Name)
 	if err == nil {
 		return HttpConflict(err)
@@ -273,7 +273,7 @@ func (s *ProjectService) CreateProjectZoneKonvey(ctx context.Context, projectId 
 		return HttpNotFound(err)
 	}
 
-	// ensure Konvey does not already exists (globally, accross all projects)
+	// ensure Konvey does not already exists (globally, across all projects)
 	kName := konvey.Name
 	if kName == "" {
 		kName = p.Name
@@ -336,7 +336,7 @@ func (s *ProjectService) CreateProjectRegionKylo(ctx context.Context, projectId 
 		return HttpNotFound(err)
 	}
 
-	// ensure storage does not already exists (globally, accross all projects)
+	// ensure storage does not already exists (globally, across all projects)
 	_, err = FindKyloByName(kylo.Name)
 	if err == nil {
 		return HttpConflict(err)
@@ -372,7 +372,7 @@ func (s *ProjectService) CreateProjectRegionKawaii(ctx context.Context, projectI
 		return HttpNotFound(err)
 	}
 
-	// ensure Kawaii does not already exists (globally, accross all projects)
+	// ensure Kawaii does not already exists (globally, across all projects)
 	kawaiiName := KawaiiDefaultNamePrefix + "-" + p.Name
 	_, err = FindKawaiiByName(kawaiiName)
 	if err == nil {
@@ -530,7 +530,7 @@ func (s *ProjectService) CreateProjectRegionKonvey(ctx context.Context, projectI
 		return HttpNotFound(err)
 	}
 
-	// ensure Konvey does not already exists (globally, accross all projects)
+	// ensure Konvey does not already exists (globally, across all projects)
 	kName := konvey.Name
 	if kName == "" {
 		kName = p.Name

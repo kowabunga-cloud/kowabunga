@@ -331,7 +331,7 @@ func (mzr *MultiZonesResource) RequestPublicVIPs() error {
 }
 
 func (mzr *MultiZonesResource) GetVirtualIPs() error {
-	// perform various checks before going any futher ...
+	// perform various checks before going any further ...
 	publicInterface := fmt.Sprintf("%s%d", AdapterOsNicLinuxPrefix, AdapterOsNicLinuxStartIndex)
 	publicSubnet, err := FindSubnetByID(mzr.PublicSubnetID)
 	if err != nil {
