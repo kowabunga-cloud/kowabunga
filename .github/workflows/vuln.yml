@@ -1,4 +1,4 @@
-name: Kowabunga Vulnerabilities Check
+name: Go Vulnerabilities Check
 on:
   push:
     branches:
@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install package dependencies
+        run: sudo apt-get install -y debhelper librados-dev librbd-dev gcc
       - uses: actions/checkout@v4
       - name: Setup Go
         uses: actions/setup-go@v5
