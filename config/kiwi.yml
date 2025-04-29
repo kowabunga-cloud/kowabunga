@@ -1,0 +1,15 @@
+global:
+  logLevel: DEBUG
+  id: AGENT_ID
+  endpoint: "wss://kowabunga.acme.com"
+  apiKey: API_KEY
+pdns:
+  authoritative:
+    host: HOST_IP
+    api_port: 8081
+    api_key: POWERDNS_TOKEN
+  recursors:
+    - host: HOST_IP
+      port: 53
+      api_port: 8082
+      api_key: POWERDNS_TOKEN

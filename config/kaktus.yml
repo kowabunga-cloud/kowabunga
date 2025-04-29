@@ -1,0 +1,19 @@
+global:
+  logLevel: DEBUG
+  id: AGENT_ID
+  endpoint: "wss://kowabunga.acme.com"
+  apiKey: API_KEY
+libvirt:
+  protocol: tcp
+  address: HOST_IP
+  port: 16509
+  tls:
+    key: PRIV_KEY
+    cert: PUB_KEY
+    ca: CA
+ceph:
+  plugin: /usr/lib/kowabunga/plugins/ceph.so
+  monitor:
+    name: MON_NAME
+    address: MON_IP
+    port: 3300
