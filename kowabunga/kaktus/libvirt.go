@@ -340,13 +340,13 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 	}
 
 	stateMap := map[int32]VirtDomainState{
-		int32(virt.DomainNostate): VirtDomainState{
+		int32(virt.DomainNostate): {
 			State: "No State",
 			Reason: map[int32]string{
 				int32(virt.DomainNostateUnknown): "Unknown",
 			},
 		},
-		int32(virt.DomainRunning): VirtDomainState{
+		int32(virt.DomainRunning): {
 			State: "Running",
 			Reason: map[int32]string{
 				int32(virt.DomainRunningUnknown):           "Unknown",
@@ -362,13 +362,13 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 				int32(virt.DomainRunningPostcopy):          "Post Copy",
 			},
 		},
-		int32(virt.DomainBlocked): VirtDomainState{
+		int32(virt.DomainBlocked): {
 			State: "Blocked",
 			Reason: map[int32]string{
 				int32(virt.DomainBlockedUnknown): "Unknown",
 			},
 		},
-		int32(virt.DomainPaused): VirtDomainState{
+		int32(virt.DomainPaused): {
 			State: "Paused",
 			Reason: map[int32]string{
 				int32(virt.DomainPausedUnknown):        "Unknown",
@@ -387,14 +387,14 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 				int32(virt.DomainPausedPostcopyFailed): "Post Copy Failed",
 			},
 		},
-		int32(virt.DomainShutdown): VirtDomainState{
+		int32(virt.DomainShutdown): {
 			State: "Shutdown",
 			Reason: map[int32]string{
 				int32(virt.DomainShutdownUnknown): "Unknown",
 				int32(virt.DomainShutdownUser):    "User",
 			},
 		},
-		int32(virt.DomainShutoff): VirtDomainState{
+		int32(virt.DomainShutoff): {
 			State: "Shutoff",
 			Reason: map[int32]string{
 				int32(virt.DomainShutoffUnknown):      "Unknown",
@@ -408,14 +408,14 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 				int32(virt.DomainShutoffDaemon):       "Daemon",
 			},
 		},
-		int32(virt.DomainCrashed): VirtDomainState{
+		int32(virt.DomainCrashed): {
 			State: "Crashed",
 			Reason: map[int32]string{
 				int32(virt.DomainCrashedUnknown):  "Unknown",
 				int32(virt.DomainCrashedPanicked): "Panicked",
 			},
 		},
-		int32(virt.DomainPmsuspended): VirtDomainState{
+		int32(virt.DomainPmsuspended): {
 			State: "PM Suspended",
 			Reason: map[int32]string{
 				int32(virt.DomainPmsuspendedUnknown): "Unknown",

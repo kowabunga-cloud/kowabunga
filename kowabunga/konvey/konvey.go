@@ -12,33 +12,33 @@ import (
 )
 
 var konveyServices = map[string]*agents.ManagedService{
-	"keepalived": &agents.ManagedService{
+	"keepalived": {
 		BinaryPath: "",
 		UnitName:   "keepalived.service",
 		User:       "root",
 		Group:      "root",
 		ConfigPaths: []agents.ConfigFile{
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.KeepalivedConfTemplate("konvey"),
 				TargetPath:      "/etc/keepalived/keepalived.conf",
 			},
 		},
 	},
-	"traefik": &agents.ManagedService{
+	"traefik": {
 		BinaryPath: "", //TODO: Later use for binary upgrade mgmt
 		UnitName:   "traefik.service",
 		User:       "traefik",
 		Group:      "traefik",
 		ConfigPaths: []agents.ConfigFile{
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikConfTemplate("konvey"),
 				TargetPath:      "/etc/traefik/traefik.yml",
 			},
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikLayer4ConfTemplate("konvey", "tcp"),
 				TargetPath:      "/etc/traefik/conf.d/tcp.yml",
 			},
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikLayer4ConfTemplate("konvey", "udp"),
 				TargetPath:      "/etc/traefik/conf.d/udp.yml",
 			},

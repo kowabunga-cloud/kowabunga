@@ -18,29 +18,29 @@ const (
 )
 
 var testKonveyServices = map[string]*agents.ManagedService{
-	"keepalived": &agents.ManagedService{
+	"keepalived": {
 		BinaryPath: "",
 		UnitName:   "keepalived",
 		ConfigPaths: []agents.ConfigFile{
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.KeepalivedConfTemplate("konvey"),
 				TargetPath:      "keepalived.conf",
 			},
 		},
 	},
-	"traefik": &agents.ManagedService{
+	"traefik": {
 		BinaryPath: "",
 		UnitName:   "traefik",
 		ConfigPaths: []agents.ConfigFile{
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikConfTemplate("konvey"),
 				TargetPath:      "traefik.yml",
 			},
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikLayer4ConfTemplate("konvey", "tcp"),
 				TargetPath:      "tcp.yml",
 			},
-			agents.ConfigFile{
+			{
 				TemplateContent: templates.TraefikLayer4ConfTemplate("konvey", "udp"),
 				TargetPath:      "udp.yml",
 			},
