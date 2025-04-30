@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -e "/lib/systemd/system/kowabunga-kawaii-agent.service" ]; then
+    echo 'Stopping Kowabunga Kawaii agent...'
+    systemctl stop kowabunga-kawaii-agent
+fi
+
+if pgrep kawaii >/dev/null; then
+    echo "Stopping Kowabunga Kawaii agent..."
+    killall kawaii
+fi
+
+exit 0

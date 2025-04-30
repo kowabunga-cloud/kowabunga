@@ -1,0 +1,4 @@
+bin/kaktus                                                      /usr/bin
+plugins/ceph.so                                                 /usr/lib/kowabunga/plugins
+config/kaktus.yml                                               /etc/kowabunga
+debian/lib/systemd/system/kowabunga-kaktus-agent.service        /lib/systemd/system

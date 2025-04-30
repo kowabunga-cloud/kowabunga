@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $1 = 'remove' ]; then
+  echo 'Removing kowabunga kaktus user...'
+  userdel kaktus -r -f
+fi
+
+exit 0

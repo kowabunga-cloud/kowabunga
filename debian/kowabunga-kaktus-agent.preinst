@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ "$1" = install ]; then
+    echo "Setting up kowabunga group and kaktus user"
+
+    # creating kowabunga group if he isn't already there
+    if ! getent group kowabunga >/dev/null; then
+        # Adding system group: kowabunga.
+        addgroup --system kowabunga >/dev/null
+    fi
+
+    # creating kowabunga kaktus user if he isn't already there
+    if ! getent passwd kaktus >/dev/null; then
+        # Adding system user: kaktus.
+        adduser \
+            --system \
+            --disabled-login \
+            --ingroup kowabunga \
+            --no-create-home \
+            --home /nonexistent \
+            --gecos "Kowabunga Kaktus Agent" \
+            --shell /bin/false \
+            kaktus >/dev/null
+    fi
+fi
+
+exit 0

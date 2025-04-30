@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $1 = 'remove' ]; then
+  echo 'Removing kahuna user...'
+  userdel kahuna -r -f
+fi
+
+exit 0

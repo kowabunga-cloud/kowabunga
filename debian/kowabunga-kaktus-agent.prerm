@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -e "/lib/systemd/system/kowabunga-kaktus-agent.service" ]; then
+    echo 'Stopping kowabunga kaktus agent...'
+    systemctl stop kowabunga-kaktus-agent
+fi
+
+if pgrep kaktus >/dev/null; then
+    echo "Stopping kowabunga kaktus agent..."
+    killall kaktus
+fi
+
+exit 0

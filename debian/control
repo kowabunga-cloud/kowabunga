@@ -1,0 +1,42 @@
+Source: kowabunga
+Section: web
+Priority: extra
+Maintainer: The Kowabunga Project <maintainers@kowabunga.cloud>
+Uploaders: The Kowabunga Project <maintainers@kowabunga.cloud>
+Build-Depends: debhelper, librados-dev, librbd-dev, gcc
+Standards-Version: 3.9.2
+
+Package: kowabunga-kahuna
+Architecture: any
+Depends: ${misc:Depends}
+Description: Kowabunga Kahuna Orchestrator
+ Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'.
+ Kahuna is the core service engine, providing REST API frontend and orchestration capabilities.
+
+Package: kowabunga-kaktus-agent
+Architecture: any
+Depends: ${misc:Depends}, librados2, librbd1
+Description: Kowabunga Kaktus Agent
+ Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
+ This is Kaktus agent, meant to control KVM/libvirt hypervisors and Ceph distributed storage.
+
+Package: kowabunga-kawaii-agent
+Architecture: any
+Depends: ${misc:Depends}
+Description: Kowabunga Kawaii Agent
+ Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
+ This is Kawaii agent, meant to provide as-a-service Internet gateway capabilities.
+
+Package: kowabunga-kiwi-agent
+Architecture: any
+Depends: ${misc:Depends}
+Description: Kowabunga Networking Agent
+ Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
+ This is Kiwi agent, meant to control network gateway services.
+
+Package: kowabunga-konvey-agent
+Architecture: any
+Depends: ${misc:Depends}
+Description: Kowabunga Konvey Agent
+ Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
+ This is Konvey agent, meant to provide as-a-service network load-balancer capabilities.

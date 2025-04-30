@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -e "/lib/systemd/system/kowabunga-kiwi-agent.service" ]; then
+    echo 'Stopping kowabunga kiwi agent...'
+    systemctl stop kowabunga-kiwi-agent
+fi
+
+if pgrep kiwi >/dev/null; then
+    echo "Stopping kowabunga kiwi agent..."
+    killall kiwi
+fi
+
+exit 0

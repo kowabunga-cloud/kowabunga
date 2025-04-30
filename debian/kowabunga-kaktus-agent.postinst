@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$1" = configure ]; then
+    chown -R kaktus:kowabunga /etc/kowabunga
+    chmod 640 /etc/kowabunga/kaktus.yml
+fi
+
+exit 0

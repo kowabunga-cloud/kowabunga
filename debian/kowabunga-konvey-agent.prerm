@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -e "/lib/systemd/system/kowabunga-konvey-agent.service" ]; then
+    echo 'Stopping kowabunga Konvey agent...'
+    systemctl stop kowabunga-konvey-agent
+fi
+
+if pgrep konvey >/dev/null; then
+    echo "Stopping kowabunga Konvey agent..."
+    killall konvey
+fi
+
+exit 0
