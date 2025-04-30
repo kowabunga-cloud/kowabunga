@@ -19,7 +19,7 @@ This is **Kowabunga**, a complete infrastructure automation suite to orchestrate
 [![Coverage Status](https://codecov.io/gh/kowabunga-cloud/kowabunga/branch/master/graph/badge.svg)](https://codecov.io/gh/kowabunga-cloud/kowabunga)
 [![GoReport](https://goreportcard.com/badge/github.com/kowabunga-cloud/kowabunga)](https://goreportcard.com/report/github.com/kowabunga-cloud/kowabunga)
 [![GoCode](https://img.shields.io/badge/go.dev-pkg-007d9c.svg?style=flat)](https://pkg.go.dev/github.com/kowabunga-cloud/kowabunga)
-[![time tracker](https://wakatime.com/badge/gtihub/kowabunga-cloud/kowabunga.svg)](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga)
+[![time tracker](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga.svg)](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga)
 ![Code lines](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=code)
 ![Comments](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=comments)
 
