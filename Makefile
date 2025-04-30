@@ -62,7 +62,6 @@ CGO_LDFLAGS = "-L$(OSX_CEPH_DIR)/lib"
 endif
 
 # This is our default target
-# it do all the steps required to build the debian package or docker image
 # it does not build/run the tests
 .PHONY: all
 all: mod fmt vet lint build ; @ ## Do all
@@ -173,8 +172,8 @@ build: kahuna kaktus kawaii kiwi konvey plugin-ceph
 tests: ; $(info $(M) testing Kowabunga suite…) @
 	$Q go test ./... -count=1 -coverprofile=coverage.txt
 
-.PHONY: deb
-deb: ; $(info $(M) building debian package…) @ ## Build debian package
+.PHONY: release
+release: ; $(info $(M) building debian package…) @ ## Build debian package
 	$Q VERSION=$(VERSION) ./debian.sh
 
 .PHONY: get-lint
