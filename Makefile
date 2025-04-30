@@ -172,8 +172,8 @@ build: kahuna kaktus kawaii kiwi konvey plugin-ceph
 tests: ; $(info $(M) testing Kowabunga suite…) @
 	$Q go test ./... -count=1 -coverprofile=coverage.txt
 
-.PHONY: release
-release: ; $(info $(M) building debian package…) @ ## Build debian package
+.PHONY: deb
+deb: ; $(info $(M) building debian package…) @ ## Build debian package
 	$Q VERSION=$(VERSION) ./debian.sh
 
 .PHONY: get-lint
