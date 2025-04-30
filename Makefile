@@ -29,7 +29,7 @@ YARN = $(NODE_DIR)/.bin/yarn
 OPENAPI_GENERATOR = $(NODE_DIR)/.bin/openapi-generator-cli
 
 GOLINT = $(BINDIR)/golangci-lint
-GOLINT_VERSION = v1.64.6
+GOLINT_VERSION = v2.1.5
 
 GOVULNCHECK = $(BINDIR)/govulncheck
 GOVULNCHECK_VERSION = v1.1.4
@@ -183,7 +183,7 @@ get-lint: ; $(info $(M) downloading go-lint…) @
 
 .PHONY: lint
 lint: get-lint ; $(info $(M) running go-lint…) @
-	$Q $(GOLINT) run -e SA1019 ./... ; exit 0
+	$Q $(GOLINT) run ./... ; exit 0
 
 .PHONY: get-govulncheck
 get-govulncheck: ; $(info $(M) downloading govulncheck…) @
