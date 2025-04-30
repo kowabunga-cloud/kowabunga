@@ -22,7 +22,6 @@ require (
 	github.com/huandu/xstrings v1.5.0
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
 	github.com/joeig/go-powerdns/v3 v3.15.0
-	github.com/juju/errors v1.0.0
 	github.com/kdomanski/iso9660 v0.4.0
 	github.com/klauspost/compress v1.18.0
 	github.com/lima-vm/go-qcow2reader v0.6.0
