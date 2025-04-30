@@ -10,14 +10,10 @@
 package kawaii
 
 import (
-	"fmt"
 	"testing"
-	"time"
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents/templates"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
-	"github.com/vishvananda/netlink"
 )
 
 const (
