@@ -1,8 +1,12 @@
 ## unreleased (yyyy-mm-dd)
+
+## 0.63.0 (2025-05-02)
+* **NEW**: **kahuna**: switched to MongoDB driver v2.
 * **NEW**: **kawaii**: When creating a Kawaii Public and Private VIP, those are now coupled under a same Virtual Router ID
+* **NEW**: **misc**: upgraded to golangci-lint v2, fixes compliance issues.
 * **BUG**: **kawaii**: IPsecs routing is updated dynamically on VIP failover
 * **BUG**: **kawaii**: add a firewall rule to allow AH and ESP protocols  in a tunnel
-  
+
 ## 0.62.6 (2025-03-06)
 * **NEW**: requires Go SDK 1.24.
 
