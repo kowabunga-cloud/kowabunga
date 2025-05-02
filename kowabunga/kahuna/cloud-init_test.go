@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const (
@@ -25,7 +25,7 @@ func TestWindowsUserDataTemplate(t *testing.T) {
 		t.Errorf("%s", err.Error())
 	}
 	res := Resource{
-		ID:   primitive.NewObjectID(),
+		ID:   bson.NewObjectID(),
 		Name: "roottest",
 	}
 	sub := &Subnet{

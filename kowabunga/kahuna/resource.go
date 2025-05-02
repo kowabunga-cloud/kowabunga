@@ -9,7 +9,7 @@ package kahuna
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
@@ -27,10 +27,10 @@ type Resources struct {
 }
 
 type Resource struct {
-	ID            primitive.ObjectID `bson:"_id"`
-	CreatedAt     time.Time          `bson:"created_at"`
-	UpdatedAt     time.Time          `bson:"updated_at"`
-	SchemaVersion int                `bson:"schema_version"`
+	ID            bson.ObjectID `bson:"_id"`
+	CreatedAt     time.Time     `bson:"created_at"`
+	UpdatedAt     time.Time     `bson:"updated_at"`
+	SchemaVersion int           `bson:"schema_version"`
 
 	Name        string `bson:"name"`
 	Description string `bson:"description"`
@@ -39,7 +39,7 @@ type Resource struct {
 func NewResource(name, desc string, schemaVersion int) Resource {
 	now := time.Now()
 	return Resource{
-		ID:            primitive.NewObjectIDFromTimestamp(now),
+		ID:            bson.NewObjectIDFromTimestamp(now),
 		CreatedAt:     now,
 		UpdatedAt:     now,
 		SchemaVersion: schemaVersion,
