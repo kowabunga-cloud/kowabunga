@@ -13,4 +13,4 @@ ${CHANGES}
 EOF
 
 sed -i 's%^-%  \*%g' debian/changelog
-fakeroot debian/rules binary
+DEB_BUILD_OPTIONS=noautodbgsym fakeroot debian/rules binary
