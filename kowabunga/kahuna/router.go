@@ -363,7 +363,7 @@ func reqIsAuthorized(r *http.Request) bool {
 	userId := ctxGetUserId(ctx)
 	if userId != "" {
 		for _, route := range userAllowedRoutes {
-			rt := SdkBaseRoute + strings.Replace(route.Route, "{userId}", userId, -1)
+			rt := SdkBaseRoute + strings.ReplaceAll(route.Route, "{userId}", userId)
 			match, _ := regexp.MatchString(rt, r.RequestURI)
 			if match && validMethod(r.Method, route) {
 				return true
@@ -424,38 +424,38 @@ func verifyAgentHeaders(w http.ResponseWriter, r *http.Request) (string, string,
 	agentType := r.Header.Get(ws.WsHeaderAgentType)
 	if agentType == "" {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return agentType, "", fmt.Errorf("Unspecified Kowabunga agent type")
+		return agentType, "", fmt.Errorf("unspecified Kowabunga agent type")
 	}
 
 	if !slices.Contains(common.SupportedAgents(), agentType) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-		return agentType, "", fmt.Errorf("Unsupported Kowabunga agent type")
+		return agentType, "", fmt.Errorf("unsupported Kowabunga agent type")
 	}
 
 	// check for valid agent ID
 	agentId := r.Header.Get(ws.WsHeaderAgentId)
 	if agentId == "" {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return agentType, agentId, fmt.Errorf("Unspecified Kowabunga agent ID")
+		return agentType, agentId, fmt.Errorf("unspecified Kowabunga agent ID")
 	}
 
 	ag, err := FindAgentByID(agentId)
 	if err != nil {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-		return agentType, agentId, fmt.Errorf("Unsupported Kowabunga agent ID")
+		return agentType, agentId, fmt.Errorf("unsupported Kowabunga agent ID")
 	}
 
 	// check for agent API key authentication
 	apiKey := r.Header.Get(ws.WsHeaderAgentApiKey)
 	if apiKey == "" {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return agentType, agentId, fmt.Errorf("Unspecified Kowabunga agent API key")
+		return agentType, agentId, fmt.Errorf("unspecified Kowabunga agent API key")
 	}
 
 	token, err := ag.Token()
 	if err != nil {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-		return agentType, agentId, fmt.Errorf("No api key token associated to agent")
+		return agentType, agentId, fmt.Errorf("no api key token associated to agent")
 	}
 
 	err = token.Verify(apiKey)

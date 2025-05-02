@@ -283,7 +283,7 @@ func (k *Kaktus) InstanceOperation(args *KaktusInstanceOperationArgs, reply *Kak
 		return k.agent.lcs.ResumeInstance(args.Name)
 	}
 
-	return fmt.Errorf("Unsupported instance operation: %d", args.Action)
+	return fmt.Errorf("unsupported instance operation: %d", args.Action)
 }
 
 /*

@@ -182,7 +182,7 @@ func (server *WsRpcServer) getServiceMethod(sm string) (*service, *methodType, e
 }
 
 func (server *WsRpcServer) binConvert(b []byte, x any) error {
-	var params any = x
+	var params = x
 	return json.Unmarshal(b, &params)
 }
 

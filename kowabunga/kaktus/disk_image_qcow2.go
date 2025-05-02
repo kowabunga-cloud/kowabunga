@@ -39,17 +39,17 @@ func qcowCompressionType(ct qcow2.CompressionType) string {
 
 func qcowGetImageInformations(fname string, img image.Image) {
 	qc := img.(*qcow2.Qcow2)
-	version := qc.Header.HeaderFieldsV2.Version
-	cryptMethod := qcowEncryptionMethod(qc.Header.HeaderFieldsV2.CryptMethod)
+	version := qc.Version
+	cryptMethod := qcowEncryptionMethod(qc.CryptMethod)
 
 	compressionType := qcowCompressionType(qcow2.CompressionTypeZlib) // default if unspecified
-	if qc.Header.HeaderFieldsAdditional != nil {
-		compressionType = qcowCompressionType(qc.Header.HeaderFieldsAdditional.CompressionType)
+	if qc.HeaderFieldsAdditional != nil {
+		compressionType = qcowCompressionType(qc.CompressionType)
 	}
 	klog.Infof("%s is a QCOW2 v%d disk image (%s, %s)", fname, version, cryptMethod, compressionType)
 
 	// check for possible Zstd compression
-	if qc.Header.HeaderFieldsAdditional != nil && qc.Header.HeaderFieldsAdditional.CompressionType == qcow2.CompressionTypeZstd {
+	if qc.HeaderFieldsAdditional != nil && qc.CompressionType == qcow2.CompressionTypeZstd {
 		klog.Debugf("QCOW2: registering ZSTD stream decompressor")
 		qcow2.SetDecompressor(qcow2.CompressionTypeZstd, NewZstdDecompressor)
 	}

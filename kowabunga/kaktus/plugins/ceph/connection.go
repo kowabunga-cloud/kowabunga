@@ -19,8 +19,8 @@ import (
 const (
 	CephCliBinary = "ceph"
 
-	CephConnectionTimeoutSeconds = 5 * time.Second
-	CephPingTimeoutSeconds       = 30 * time.Second
+	CephConnectionTimeout = 5 * time.Second
+	CephPingTimeout       = 30 * time.Second
 
 	CephMonitorDefaultPort = 3300
 
@@ -30,7 +30,7 @@ const (
 func (ceph *ccs) Setup(name, address string, port int) error {
 
 	if address == "" {
-		return fmt.Errorf("Invalid ceph configuration, missing address")
+		return fmt.Errorf("invalid ceph configuration, missing address")
 	}
 
 	ceph.Name = name
@@ -99,11 +99,7 @@ func (ceph *ccs) Disconnect() {
 
 func (ceph *ccs) registerConnectionMonitor() {
 	host := fmt.Sprintf("%s:%d", ceph.Address, ceph.Port)
-	for {
-		if !ceph.keepRunning {
-			break
-		}
-
+	for ceph.keepRunning {
 		_, err := ceph.Conn.PingMonitor(ceph.Name)
 		if err != nil {
 			klog.Warningf("ceph disconnection from %s has been detected", host)
@@ -115,7 +111,7 @@ func (ceph *ccs) registerConnectionMonitor() {
 				err := ceph.Connect()
 				if err != nil {
 					klog.Error(err)
-					time.Sleep(CephConnectionTimeoutSeconds)
+					time.Sleep(CephConnectionTimeout)
 					continue
 				}
 				klog.Infof("Successfully reconnected to Ceph on %s", host)
@@ -123,6 +119,6 @@ func (ceph *ccs) registerConnectionMonitor() {
 			}
 		}
 
-		time.Sleep(CephPingTimeoutSeconds)
+		time.Sleep(CephPingTimeout)
 	}
 }

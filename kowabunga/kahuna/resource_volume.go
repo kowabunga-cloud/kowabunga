@@ -74,7 +74,7 @@ func NewVolume(projectId, poolId, templateId, name, desc, tp string, size int64)
 	case VolumeTypeOs, VolumeTypeIso, VolumeTypeRaw, VolumeTypeTemplate:
 		break
 	default:
-		return nil, fmt.Errorf("Unsupported volume type: %s", tp)
+		return nil, fmt.Errorf("unsupported volume type: %s", tp)
 	}
 
 	v := Volume{
@@ -362,7 +362,7 @@ func (v *Volume) ResizeVolume() error {
 
 	requestedSize := uint64(v.Size)
 	if requestedSize < capacity {
-		return fmt.Errorf("Unable to shrink storage volume %s from %s to %s", v.String(), HumanByteSize(capacity), HumanByteSize(requestedSize))
+		return fmt.Errorf("unable to shrink storage volume %s from %s to %s", v.String(), HumanByteSize(capacity), HumanByteSize(requestedSize))
 	}
 
 	// resize volume
@@ -376,7 +376,7 @@ func (v *Volume) ResizeVolume() error {
 
 	err = pool.RPC("ResizeVolume", argsResize, &replyResize)
 	if err != nil {
-		return fmt.Errorf("Error trying to resize volume %s: %v", v.Name, err)
+		return fmt.Errorf("error trying to resize volume %s: %v", v.Name, err)
 	}
 
 	// update volume cost details

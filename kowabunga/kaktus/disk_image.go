@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	DiskImageUnsupportedTypeError = "Unsupported disk image type: %s"
-	DiksImageRawWriteError        = "Mismatch between virtual image disk size and raw written bytes"
+	DiskImageUnsupportedTypeError = "unsupported disk image type: %s"
+	DiksImageRawWriteError        = "mismatch between virtual image disk size and raw written bytes"
 )
 
 var supportedDiskImageTypes = []image.Type{

@@ -71,7 +71,9 @@ func (ci *CloudInit) SetData(src, dst string, values any) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		_ = out.Close()
+	}()
 
 	// Render Template with input values
 	err = tpl.Execute(out, values)
@@ -259,7 +261,7 @@ func (ci *CloudInit) SetNetworkConfig(projectId, zoneId, domain, profile string,
 		gw_ip := ""
 		gwIP := net.ParseIP(zoneGw)
 		if gwIP == nil {
-			return fmt.Errorf("Invalid IP: %s", gwIP)
+			return fmt.Errorf("invalid IP: %s", gwIP)
 		}
 		if ipnet.Contains(gwIP) {
 			gw_ip = zoneGw

@@ -43,7 +43,9 @@ func KiwiConfigParser(f *os.File) (*KiwiAgentConfig, error) {
 
 	// unmarshal configuration
 	contents, _ := io.ReadAll(f)
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	err := yaml.Unmarshal(contents, &config)
 	if err != nil {
 		return &config, err

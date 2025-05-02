@@ -50,7 +50,9 @@ func KaktusConfigParser(f *os.File) (*KaktusAgentConfig, error) {
 
 	// unmarshal configuration
 	contents, _ := io.ReadAll(f)
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	err := yaml.Unmarshal(contents, &config)
 	if err != nil {
 		return &config, err

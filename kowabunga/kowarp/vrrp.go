@@ -126,10 +126,10 @@ func (v *KowabungaVRRP) DecodeFromBytes(data []byte) error {
 
 	if v.Type != 1 {
 		// rfc3768: A packet with unknown type MUST be discarded.
-		return fmt.Errorf("Unrecognized KowabungaVRRP type field.: %d", v.Type)
+		return fmt.Errorf("unrecognized KowabungaVRRP type field.: %d", v.Type)
 	}
 	if v.CountIPAddr < 1 {
-		return errors.New("KowabungaVRRP number of IP addresses is not valid.")
+		return errors.New("KowabungaVRRP number of IP addresses is not valid")
 	}
 	// populate the IPAddress field. The number of addresses is specified in the v.CountIPAddr field
 	// offset references the starting byte containing the list of ip addresses
@@ -149,10 +149,10 @@ func (v *KowabungaVRRP) length() uint16 {
 // computeChecksum=false when receive
 func (v *KowabungaVRRP) Serialize(source, dest *net.IP, computeChecksum bool) ([]byte, error) {
 	if int(v.CountIPAddr) != len(v.IPAddresses) {
-		return nil, fmt.Errorf("Packet CountIPAddr must match IPAddresses count")
+		return nil, fmt.Errorf("packet CountIPAddr must match IPAddresses count")
 	}
 	if source == nil || dest == nil {
-		return nil, fmt.Errorf("Source and destination IP can't be nil")
+		return nil, fmt.Errorf("source and destination IP can't be nil")
 	}
 	//Pre configure pseudo header for checksum usage
 	v.configurePseudoHeader(source, dest)
@@ -194,10 +194,7 @@ func (v *KowabungaVRRP) computeChecksum(vrrpBytes []byte) uint16 {
 		csum += uint32(bytes[i]) << 8
 		csum += uint32(bytes[i+1])
 	}
-	for {
-		if csum <= 65535 {
-			break
-		}
+	for csum > 65535 {
 		// Add carry to the sum
 		csum = (csum >> 16) + uint32(uint16(csum))
 	}
@@ -221,10 +218,7 @@ func (v *KowabungaVRRP) ValidateChecksum(source, dest *net.IP) (bool, uint16, er
 		csum += uint32(bytes[i]) << 8
 		csum += uint32(bytes[i+1])
 	}
-	for {
-		if csum <= 65535 {
-			break
-		}
+	for csum > 65535 {
 		// Add carry to the sum
 		csum = (csum >> 16) + uint32(uint16(csum))
 	}

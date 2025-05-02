@@ -250,15 +250,11 @@ func (vr *virtualRouter) BackupMode() {
 		case packet := <-vr.packet:
 			if packet.Priority == 0 {
 				interval = vr.AdvertisementInterval
-				break
 			} else if !vr.PreemptMode || packet.Priority >= vr.Priority {
 				vr.MasterAdverInterval = packet.AdverInt
 				vr.MasterDownInterval = 3*vr.MasterAdverInterval + vr.skewTime
 				interval = vr.MasterDownInterval
-				break
 			}
-			// on timer update, break is mandatory to handle it properly in the select stmt.
-			// Otherwise, the select statement will still use the old, unreleased and unmodified ticker
 		}
 		vr.masterDownTimer = *time.NewTicker(time.Duration(interval*10) * time.Millisecond)
 	}
@@ -268,9 +264,9 @@ func (vr *virtualRouter) Start(routineUnhandledError chan<- error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err, ok := r.(error); ok {
-				routineUnhandledError <- fmt.Errorf("Virtual Router failed %d : %w", vr.ID, err)
+				routineUnhandledError <- fmt.Errorf("virtual Router failed %d : %w", vr.ID, err)
 			} else {
-				routineUnhandledError <- fmt.Errorf("Virtual Router %d : Panic happened with %v", vr.ID, r)
+				routineUnhandledError <- fmt.Errorf("virtual Router %d : Panic happened with %v", vr.ID, r)
 			}
 		}
 	}()
@@ -291,7 +287,7 @@ func (vr *virtualRouter) Start(routineUnhandledError chan<- error) {
 					}
 				}
 			} else {
-				break
+				return
 			}
 		case MASTER:
 			vr.MasterMode()

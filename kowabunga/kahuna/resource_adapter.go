@@ -115,10 +115,7 @@ func RandomIpAddress(subnetId string) (string, error) {
 
 	addr := p.Addr()
 	addr = addr.Next() // skip the first IP from the range (.0)
-	for {
-		if !p.Contains(addr) {
-			break
-		}
+	for p.Contains(addr) {
 		ip = addr.String()
 
 		// ensure it's not gateway or broadcast address
@@ -144,7 +141,7 @@ func RandomIpAddress(subnetId string) (string, error) {
 		return ip, nil
 	}
 
-	return ip, fmt.Errorf("No IP can be assigned")
+	return ip, fmt.Errorf("no IP can be assigned")
 }
 
 func verifyAdapterSettings(subnetId, mac string, addresses []string, update bool) error {
@@ -168,7 +165,7 @@ func verifyAdapterSettings(subnetId, mac string, addresses []string, update bool
 		// ensure we don't have any MAC duplicates
 		for _, a := range FindAdapters() {
 			if mac == a.MAC && !a.Reserved {
-				return fmt.Errorf("Duplicated MAC address (%s) has been found. We can't authorize that unless you flag is as reserved", mac)
+				return fmt.Errorf("duplicated MAC address (%s) has been found. We can't authorize that unless you flag is as reserved", mac)
 			}
 		}
 	}
@@ -177,7 +174,7 @@ func verifyAdapterSettings(subnetId, mac string, addresses []string, update bool
 	for _, i := range addresses {
 		ip := net.ParseIP(i)
 		if ip == nil {
-			return fmt.Errorf("Invalid IP: %s", i)
+			return fmt.Errorf("invalid IP: %s", i)
 		}
 		if !cidr.Contains(ip) {
 			return fmt.Errorf("IP %s is not part of subnet's CIDR %s", i, cidr)

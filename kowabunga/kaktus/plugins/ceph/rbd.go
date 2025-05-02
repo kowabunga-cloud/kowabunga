@@ -73,7 +73,9 @@ func (ceph *ccs) GetRbdVolumeInfos(poolName, volName string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	size, err := img.GetSize()
 	if err != nil {
@@ -149,7 +151,7 @@ func (ceph *ccs) CreateRbdVolume(poolName, volName string, size uint64) error {
 }
 
 func (ceph *ccs) writeImageData(img *rbd.Image, size uint64, data []byte) error {
-	var dsize uint64 = uint64(len(data))
+	var dsize = uint64(len(data))
 	if dsize != size {
 		err := fmt.Errorf("mismatch between RBD volume size (%d) and data size (%d)", size, dsize)
 		klog.Error(err)
@@ -181,7 +183,9 @@ func (ceph *ccs) CreateRbdVolumeFromBinData(poolName, volName string, size uint6
 	if err != nil {
 		return err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	err = ceph.writeImageData(img, size, data)
 	if err != nil {
@@ -207,7 +211,9 @@ func (ceph *ccs) UpdateRbdVolumeFromBinData(poolName, volName string, size uint6
 	if err != nil {
 		return err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	err = ceph.writeImageData(img, size, data)
 	if err != nil {
@@ -250,7 +256,9 @@ func (ceph *ccs) CreateRbdVolumeFromUrl(poolName, volName, url string) (uint64, 
 	if err != nil {
 		return 0, err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	buf := make([]byte, CephRwBufferSize)
 	var offset int64
@@ -287,7 +295,9 @@ func (ceph *ccs) CloneRbdVolume(poolName, srcName, dstName string, size uint64) 
 	if err != nil {
 		return err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	// ensure source image snapshot has a valid snapshot, create it otherwise
 	snaps, err := img.GetSnapshotNames()
@@ -339,7 +349,9 @@ func (ceph *ccs) ResizeRbdVolume(poolName, volName string, size uint64) error {
 	if err != nil {
 		return err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	klog.Infof("Resizing RBD volume %s from pool %s to %d bytes ...", volName, poolName, size)
 	err = img.Resize(size)
@@ -356,7 +368,9 @@ func (ceph *ccs) DeleteRbdVolume(poolName, volName string, deleteSnapshots bool)
 	if err != nil {
 		return err
 	}
-	defer img.Close()
+	defer func() {
+		_ = img.Close()
+	}()
 
 	if deleteSnapshots {
 		// list all snapshots, if any

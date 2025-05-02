@@ -56,7 +56,7 @@ func NewDnsRecord(projectId, domain, name, desc string, addresses []string) (*Dn
 
 	// ensure we have a rightful domain, if any
 	if domain != "" && !VerifyDomain(domain) {
-		err := fmt.Errorf("Invalid domain name: %s", domain)
+		err := fmt.Errorf("invalid domain name: %s", domain)
 		return nil, err
 	}
 
@@ -64,7 +64,7 @@ func NewDnsRecord(projectId, domain, name, desc string, addresses []string) (*Dn
 	for _, i := range addresses {
 		ip := net.ParseIP(i)
 		if ip == nil {
-			return nil, fmt.Errorf("Invalid IPv4 address: %s", i)
+			return nil, fmt.Errorf("invalid IPv4 address: %s", i)
 		}
 	}
 

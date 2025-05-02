@@ -22,7 +22,7 @@ func GetInstanceMetadata(srcIp, instanceId string) (metadata.InstanceMetadata, e
 	}
 
 	if i.String() != instanceId {
-		return meta, fmt.Errorf("Mismatch between instance ID and local IP at metadata retrieval")
+		return meta, fmt.Errorf("mismatch between instance ID and local IP at metadata retrieval")
 	}
 
 	meta.ID = i.String()

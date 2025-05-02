@@ -7,12 +7,13 @@
 package kaktus
 
 import (
-	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/xml"
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"net"
+	"os"
 	"strconv"
 	"time"
 
@@ -52,7 +53,7 @@ type LibvirtConnectionSettings struct {
 func NewLibvirtConnectionSettings(cfg *KaktusAgentConfig) (*LibvirtConnectionSettings, error) {
 
 	if cfg.Libvirt.Address == "" {
-		return nil, fmt.Errorf("Invalid libvirt configuration, missing address")
+		return nil, fmt.Errorf("invalid libvirt configuration, missing address")
 	}
 
 	lcs := LibvirtConnectionSettings{
@@ -75,7 +76,7 @@ func NewLibvirtConnectionSettings(cfg *KaktusAgentConfig) (*LibvirtConnectionSet
 			lcs.Port = LibvirtDefaultPortTLS
 		}
 	default:
-		return nil, fmt.Errorf("Transport '%s' not implemented", lcs.Protocol)
+		return nil, fmt.Errorf("transport '%s' not implemented", lcs.Protocol)
 	}
 
 	err := lcs.Connect()
@@ -94,6 +95,43 @@ func NewLibvirtConnectionSettings(cfg *KaktusAgentConfig) (*LibvirtConnectionSet
 	return &lcs, err
 }
 
+type TLS struct {
+	timeout    time.Duration
+	conf       *tls.Config
+	host, port string
+}
+
+func (t *TLS) Dial() (net.Conn, error) {
+	netDialer := net.Dialer{
+		Timeout: t.timeout,
+	}
+	c, err := tls.DialWithDialer(
+		&netDialer,
+		"tcp",
+		net.JoinHostPort(t.host, t.port),
+		t.conf,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// When running over TLS, after connection libvirt writes a single byte to
+	// the socket to indicate whether the server's check of the client's
+	// certificate has succeeded.
+	// See https://github.com/digitalocean/go-libvirt/issues/89#issuecomment-1607300636
+	// for more details.
+	buf := make([]byte, 1)
+	if n, err := c.Read(buf); err != nil {
+		_ = c.Close()
+		return nil, err
+	} else if n != 1 || buf[0] != byte(1) {
+		_ = c.Close()
+		return nil, errors.New("server verification (of our certificate or IP address) failed")
+	}
+
+	return c, nil
+}
+
 func (lcs *LibvirtConnectionSettings) Connect() error {
 	// ensure we're not already connected
 	if lcs.Conn != nil && lcs.Conn.IsConnected() {
@@ -109,17 +147,17 @@ func (lcs *LibvirtConnectionSettings) Connect() error {
 			return fmt.Errorf("failed to connect: %v", err)
 		}
 	case LibvirtProtocolTLS:
-		keyFile, err := ioutil.ReadFile(lcs.TLSClientKey)
+		keyFile, err := os.ReadFile(lcs.TLSClientKey)
 		if err != nil {
 			return err
 		}
 
-		certFile, err := ioutil.ReadFile(lcs.TLSClientCert)
+		certFile, err := os.ReadFile(lcs.TLSClientCert)
 		if err != nil {
 			return err
 		}
 
-		caFile, err := ioutil.ReadFile(lcs.TLSCA)
+		caFile, err := os.ReadFile(lcs.TLSCA)
 		if err != nil {
 			return err
 		}
@@ -139,18 +177,14 @@ func (lcs *LibvirtConnectionSettings) Connect() error {
 			MinVersion:         tls.VersionTLS12,
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), LibvirtConnectionTimeoutSeconds*time.Second)
-		d := tls.Dialer{
-			Config: tlsConfig,
-		}
-		cancel()
-
-		c, err := d.DialContext(ctx, "tcp", fmt.Sprintf("%s:%d", lcs.Address, lcs.Port))
-		if err != nil {
-			return err
+		t := &TLS{
+			timeout: LibvirtConnectionTimeoutSeconds * time.Second,
+			conf:    tlsConfig,
+			host:    lcs.Address,
+			port:    strconv.Itoa(lcs.Port),
 		}
 
-		lcs.Conn = virt.New(c)
+		lcs.Conn = virt.NewWithDialer(t)
 		if err := lcs.Conn.Connect(); err != nil {
 			return err
 		}
@@ -219,7 +253,7 @@ func getGuestMachineName(guest *virtxml.CapsGuest) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("Can't find machine type %s in %v", target, guest)
+	return "", fmt.Errorf("can't find machine type %s in %v", target, guest)
 }
 
 func (lcs *LibvirtConnectionSettings) GetHostCapabilities() (virtxml.Caps, error) {
@@ -247,7 +281,7 @@ func (lcs *LibvirtConnectionSettings) GetGuestCapabilities(caps virtxml.Caps) (s
 		}
 	}
 	if guest == nil {
-		return "", "", fmt.Errorf("Can't find guest")
+		return "", "", fmt.Errorf("can't find guest")
 	}
 
 	machineName, err := getGuestMachineName(guest)

@@ -102,7 +102,7 @@ func (i *Instance) NewInterfaceMap(adapters []string) (map[string]string, error)
 				publicAdapter = a
 				continue
 			} else {
-				return interfaces, fmt.Errorf("Multiple public adapters have been found. Unsupported")
+				return interfaces, fmt.Errorf("multiple public adapters have been found. Unsupported")
 			}
 		}
 
@@ -157,7 +157,7 @@ func (i *Instance) NewDiskMap(volumes []string) (map[string]string, error) {
 				osVolume = v
 				continue
 			} else {
-				return disks, fmt.Errorf("Multiple OS volumes have been found. Unsupported")
+				return disks, fmt.Errorf("multiple OS volumes have been found. Unsupported")
 			}
 		}
 
@@ -165,7 +165,7 @@ func (i *Instance) NewDiskMap(volumes []string) (map[string]string, error) {
 	}
 
 	if osVolume == nil {
-		return disks, fmt.Errorf("No OS volume can be found. Unsupported")
+		return disks, fmt.Errorf("no OS volume can be found. Unsupported")
 	}
 
 	index := 0
@@ -443,7 +443,7 @@ func (i *Instance) GetOsVolume() (*Volume, error) {
 
 	// ensure we only have one OS volume (no more, no less)
 	if osCount != 1 || osVolume == nil {
-		return nil, fmt.Errorf("More than one OS volume. Unsupported")
+		return nil, fmt.Errorf("more than one OS volume. Unsupported")
 	}
 
 	return osVolume, nil
@@ -500,7 +500,7 @@ func (i *Instance) CreateInstance() error {
 
 	err := i.RPC("NodeCapabilities", args, &reply)
 	if err != nil {
-		klog.Errorf("Unable to get host capabilities: %v", err)
+		klog.Errorf("unable to get host capabilities: %v", err)
 		return err
 	}
 
@@ -683,7 +683,7 @@ func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes [
 
 	xml, err := i.get(true)
 	if err != nil {
-		klog.Errorf("Unable to get instance %s description: %v", i.Name, err)
+		klog.Errorf("unable to get instance %s description: %v", i.Name, err)
 		return err
 	}
 
@@ -742,7 +742,7 @@ func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes [
 
 		err = i.update(data)
 		if err != nil {
-			klog.Errorf("Unable to update instance %s: %v", i.Name, err)
+			klog.Errorf("unable to update instance %s: %v", i.Name, err)
 			return err
 		}
 
@@ -830,7 +830,7 @@ func (i *Instance) Delete() error {
 
 	err = i.delete()
 	if err != nil {
-		klog.Errorf("Unable to delete instance %s: %v", i.Name, err)
+		klog.Errorf("unable to delete instance %s: %v", i.Name, err)
 		// nevermind, already gone
 	}
 

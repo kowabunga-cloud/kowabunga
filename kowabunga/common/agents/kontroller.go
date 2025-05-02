@@ -19,9 +19,9 @@ const (
 	KontrollerVersion  = "1.0"
 	KontrollerAppNmame = "kowabunga-kontroller-agent"
 
-	ErrorKontrollerNotRoot  = "Kontroller is not running with root privileges"
-	ErrorKontrollerRegister = "Unable to register Kowabunga Kontroller Agent: %s"
-	ErrorKontrollerSysctl   = "Unable to tune in sysctl setting '%s': %+v"
+	ErrorKontrollerNotRoot  = "kontroller is not running with root privileges"
+	ErrorKontrollerRegister = "unable to register Kowabunga Kontroller Agent: %s"
+	ErrorKontrollerSysctl   = "unable to tune in sysctl setting '%s': %+v"
 )
 
 type KowabungaSysctlSetting struct {

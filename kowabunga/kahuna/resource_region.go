@@ -335,7 +335,7 @@ func (r *Region) GetPublicSubnet() (string, error) {
 		return v.Defaults.SubnetID, nil
 	}
 
-	return "", fmt.Errorf("Unable to assign a public IPv4 addess. None available.")
+	return "", fmt.Errorf("unable to assign a public IPv4 addess. None available")
 }
 
 // Storage Pools

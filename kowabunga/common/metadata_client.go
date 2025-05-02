@@ -49,7 +49,9 @@ func GetCloudInitMetadataDataSettings() (CloudInitInstanceMetaDataSettings, erro
 	if err != nil {
 		return settings, err
 	}
-	defer image.Close()
+	defer func() {
+		_ = image.Close()
+	}()
 
 	img, err := iso9660.OpenImage(image)
 	if err != nil {
@@ -105,7 +107,9 @@ func GetInstanceMetadataRaw(settings CloudInitInstanceMetaDataSettings) (map[str
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("%s", ErrorInvalidInstanceMetdata)

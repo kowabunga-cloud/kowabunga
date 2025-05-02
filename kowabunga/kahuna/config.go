@@ -103,7 +103,9 @@ func ParseConfig(f *os.File) (KowabungaConfig, error) {
 
 	// unmarshal configuration
 	contents, _ := io.ReadAll(f)
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	err := yaml.Unmarshal(contents, &config)
 	if err != nil {
 		return config, err
@@ -111,7 +113,7 @@ func ParseConfig(f *os.File) (KowabungaConfig, error) {
 
 	// ensure default bootstrap settings are filled in
 	if config.Global.Bootstrap.User == "" || config.Global.Bootstrap.Pubkey == "" {
-		return config, fmt.Errorf("Missing config bootstrap parameters")
+		return config, fmt.Errorf("missing config bootstrap parameters")
 	}
 
 	// ensure cloud-init template files exist

@@ -31,13 +31,13 @@ const (
 	PowerDnsRecursorZoneKind        = "Forwarded"
 	PowerDnsRecursorZoneApiEndpoint = "/api/v1/servers/localhost/zones"
 
-	PowerDnsErrorServer             = "Unable to process request"
-	PowerDnsErrorNoZone             = "No such zone"
-	PowerDnsErrorZoneNotEmpty       = "Zone has existing records"
-	PowerDnsErrorNoRecord           = "No such record"
-	PowerDnsErrorWrongTypeRecord    = "Already existing record with non-A type"
-	PowerDnsErrorRecursorZoneCreate = "Unable to create zone within recursor: [%d] %s"
-	PowerDnsErrorRecursorZoneDelete = "Unable to delete zone within recursor: [%d] %s"
+	PowerDnsErrorServer             = "unable to process request"
+	PowerDnsErrorNoZone             = "no such zone"
+	PowerDnsErrorZoneNotEmpty       = "zone has existing records"
+	PowerDnsErrorNoRecord           = "no such record"
+	PowerDnsErrorWrongTypeRecord    = "already existing record with non-A type"
+	PowerDnsErrorRecursorZoneCreate = "unable to create zone within recursor: [%d] %s"
+	PowerDnsErrorRecursorZoneDelete = "unable to delete zone within recursor: [%d] %s"
 )
 
 func pdnsError(reason string, e error) error {
@@ -110,10 +110,7 @@ func (as *PowerDnsAuthoritiveServer) DeleteZoneRecord(domain, entry string) erro
 
 func newPowerDnsAuthoritativeServer(cfg KiwiAgentPowerDnsConfig) *PowerDnsAuthoritiveServer {
 	uri := fmt.Sprintf("http://%s:%d", cfg.AS.Host, cfg.AS.APIPort)
-	headers := map[string]string{
-		PowerDnsHeaderAPI: cfg.AS.APIKey,
-	}
-	client := powerdns.NewClient(uri, PowerDnsDefaultHost, headers, nil)
+	client := powerdns.New(uri, PowerDnsDefaultHost, powerdns.WithAPIKey(cfg.AS.APIKey))
 
 	return &PowerDnsAuthoritiveServer{
 		Client: client,
@@ -188,7 +185,9 @@ func (pr *PowerDnsRecursor) CreateZone(domain string, servers []string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 201 && resp.StatusCode != 422 {
 		return fmt.Errorf(PowerDnsErrorRecursorZoneCreate, resp.StatusCode, resp.Status)
@@ -208,7 +207,9 @@ func (pr *PowerDnsRecursor) DeleteZone(domain string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 204 {
 		return fmt.Errorf(PowerDnsErrorRecursorZoneDelete, resp.StatusCode, resp.Status)

@@ -83,7 +83,7 @@ func NewTemplate(poolId, name, desc, os, source string) (*Template, error) {
 	}
 	for _, tpl := range poolTemplates {
 		if name == tpl.Name {
-			return nil, fmt.Errorf("A template named %s already exists in pool %s", name, p.String())
+			return nil, fmt.Errorf("a template named %s already exists in pool %s", name, p.String())
 		}
 	}
 

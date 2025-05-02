@@ -145,7 +145,7 @@ func NewKylo(projectId, regionId, nfsId, name, desc, access string, protocols []
 
 	// ensure we have a rightful hostname, if any
 	if !VerifyHostname(name) {
-		err := fmt.Errorf("Invalid host name: %s", name)
+		err := fmt.Errorf("invalid host name: %s", name)
 		klog.Error(err)
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func NewKylo(projectId, regionId, nfsId, name, desc, access string, protocols []
 		}
 	}
 	if !validVolume {
-		return nil, fmt.Errorf("Unable to find requested Ceph file system")
+		return nil, fmt.Errorf("unable to find requested Ceph file system")
 	}
 
 	subvolumes, err := kylo.listSubVolumes(n.FS)
@@ -200,7 +200,7 @@ func NewKylo(projectId, regionId, nfsId, name, desc, access string, protocols []
 	}
 	for _, s := range subvolumes {
 		if name == s {
-			return nil, fmt.Errorf("Ceph subvolume '%s' already exists", name)
+			return nil, fmt.Errorf("ceph subvolume '%s' already exists", name)
 		}
 	}
 

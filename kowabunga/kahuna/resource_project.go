@@ -122,7 +122,7 @@ func ProjectMigrateSchema() error {
 func NewProject(name, desc, domain, pwd, user, pubkey string, teams, regions, tags []string, meta map[string]string, quotas sdk.ProjectResources, subnetSize int) (*Project, error) {
 	// ensure we have a rightful domain, if any
 	if domain != "" && !VerifyDomain(domain) {
-		err := fmt.Errorf("Invalid domain name: %s", domain)
+		err := fmt.Errorf("invalid domain name: %s", domain)
 		return nil, err
 	}
 
@@ -418,7 +418,7 @@ func (p *Project) AssignZoneGatewayAddresses() error {
 		klog.Debugf("Project %s subnet for region %s has the following local-zone gateway IPs: %s", p.Name, r.Name, gwPoolIPs)
 
 		if len(gwPoolIPs) < len(r.Zones()) {
-			err := fmt.Errorf("Too few gateway IPs in subnet to map all zone's regions")
+			err := fmt.Errorf("too few gateway IPs in subnet to map all zone's regions")
 			klog.Error(err)
 			return err
 		}
@@ -611,7 +611,7 @@ func (p *Project) AllocateVRID() (int, error) {
 		return vrrpId, nil
 	}
 
-	return 0, fmt.Errorf("Exhausted pool of virtual router IDs")
+	return 0, fmt.Errorf("exhausted pool of virtual router IDs")
 }
 
 func (p *Project) RemoveVRID(vrrpId int) {

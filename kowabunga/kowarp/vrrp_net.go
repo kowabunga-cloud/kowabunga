@@ -107,7 +107,9 @@ func VRRPMulticastReaderConn(multicastAddress, local net.IP) (*net.IPConn, error
 	if errOfGetFD != nil {
 		return nil, errOfGetFD
 	}
-	defer fd.Close()
+	defer func() {
+		_ = fd.Close()
+	}()
 
 	var mreq = &syscall.IPMreq{
 		Multiaddr: [4]byte(multicastAddress.To4()),
@@ -130,7 +132,9 @@ func VRRPConn(src net.IP, isForMulticastTarget bool) (*net.IPConn, error) {
 	if errOfGetFD != nil {
 		return nil, errOfGetFD
 	}
-	defer fd.Close()
+	defer func() {
+		_ = fd.Close()
+	}()
 	//Multicast
 	if isForMulticastTarget {
 		//set TTL
@@ -193,7 +197,7 @@ func (vrrpNet vrrpNet) ReadPacket(ipConn *net.IPConn) (*KowabungaVRRP, error) {
 		return nil, err
 	}
 	if uint8(buff[8]) != KowabungaVRRPTTL {
-		return &vrrpPacket, fmt.Errorf("TTL : %d should be 255 for vrrp.", buff[8])
+		return &vrrpPacket, fmt.Errorf("TTL: %d should be 255 for vrrp", buff[8])
 	}
 	ipv4HeaderLen := int(buff[0]&0x0f) << 2
 	err = vrrpPacket.DecodeFromBytes(buff[ipv4HeaderLen:])

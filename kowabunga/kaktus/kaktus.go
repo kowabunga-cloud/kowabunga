@@ -78,12 +78,12 @@ func NewKaktusAgent(cfg *KaktusAgentConfig) (*KaktusAgent, error) {
 
 	p, err := plugin.Open(cfg.Ceph.PluginLib)
 	if err != nil {
-		return agent, fmt.Errorf("Unable to load Kaktus Ceph plugin: %v", err)
+		return agent, fmt.Errorf("unable to load Kaktus Ceph plugin: %v", err)
 	}
 
 	symCephConnectionSettings, err := p.Lookup(KaktusPluginCephEntryPoint)
 	if err != nil {
-		return agent, fmt.Errorf("Unable to load Ceph plugin '%s' symbol: %v", KaktusPluginCephEntryPoint, err)
+		return agent, fmt.Errorf("unable to load Ceph plugin '%s' symbol: %v", KaktusPluginCephEntryPoint, err)
 	}
 
 	var ccs CephConnectionSettings
@@ -132,7 +132,7 @@ func Daemonize() error {
 
 	ka, err := NewKaktusAgent(cfg)
 	if err != nil {
-		return fmt.Errorf("Unable to register Kowabunga Kaktus agent: %s", err)
+		return fmt.Errorf("unable to register Kowabunga Kaktus agent: %s", err)
 	}
 
 	ka.Run()

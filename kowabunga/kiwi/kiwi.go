@@ -68,7 +68,7 @@ func Daemonize() error {
 
 	ka, err := NewKiwiAgent(cfg)
 	if err != nil {
-		return fmt.Errorf("Unable to register Kowabunga Kiwi agent: %s", err)
+		return fmt.Errorf("unable to register Kowabunga Kiwi agent: %s", err)
 	}
 
 	ka.Run()

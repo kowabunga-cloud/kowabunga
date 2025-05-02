@@ -8,13 +8,13 @@ package kahuna
 
 import (
 	"fmt"
+	"math/rand/v2"
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
-	"golang.org/x/exp/rand"
 )
 
 const (
@@ -64,7 +64,7 @@ func NewKawaiiIPsecConnection(kawaiiId, name, desc, remotePeer, remoteSubnet, pr
 	if err != nil {
 		return nil, fmt.Errorf("%s", ErrorIPsecUnderlyingMZRNotFound)
 	}
-	ipSecIP := mzr.PublicVIPs[rand.Intn(len(mzr.PublicVIPs))]
+	ipSecIP := mzr.PublicVIPs[rand.IntN(len(mzr.PublicVIPs))]
 
 	ipsecs, err := FindIPsecByKawaii(kawaiiId)
 	if err != nil {

@@ -51,17 +51,11 @@ func GetDB() *KowabungaDB {
 
 func (db *KowabungaDB) Open(uri, database string) error {
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri).SetWriteConcern(writeconcern.New(writeconcern.WMajority())))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri).SetWriteConcern(writeconcern.Majority()))
 	if err != nil {
 		return err
 	}
 	db.Client = client
-
-	// connecting to DB
-	err = db.Client.Connect(context.TODO())
-	if err != nil {
-		return err
-	}
 
 	// look for a primary server
 	err = db.Client.Ping(context.TODO(), readpref.Primary())

@@ -28,7 +28,7 @@ func findFirstPrivateInterface() (*net.Interface, error) {
 		isLoopback := itf.Flags&net.FlagLoopback == 1
 		addrs, err := itf.Addrs()
 		if err != nil {
-			return nil, fmt.Errorf("Interface do not have any IP assigned")
+			return nil, fmt.Errorf("interface do not have any IP assigned")
 		}
 		for _, addr := range addrs { // get ipv4 address
 			if ipv4Addr = addr.(*net.IPNet).IP.To4(); ipv4Addr != nil && ipv4Addr.IsPrivate() {
@@ -39,7 +39,7 @@ func findFirstPrivateInterface() (*net.Interface, error) {
 			return &itf, nil
 		}
 	}
-	return nil, fmt.Errorf("Could not find a running, non-loopback, with a private IPV4 assigned interface running")
+	return nil, fmt.Errorf("could not find a running, non-loopback, with a private IPV4 assigned interface running")
 }
 
 func ipLargerThan(ip1, ip2 net.IP) bool {

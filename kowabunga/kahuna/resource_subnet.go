@@ -108,12 +108,12 @@ func NewSubnet(vnetId, name, desc, cidr, gw, dns string, private bool, reserved,
 		return nil, err
 	}
 	if private && !ip.IsPrivate() {
-		err := fmt.Errorf("Trying to create a public subnet (%s) in a private virtual network", cidr)
+		err := fmt.Errorf("trying to create a public subnet (%s) in a private virtual network", cidr)
 		klog.Error(err)
 		return nil, err
 	}
 	if !private && ip.IsPrivate() {
-		err := fmt.Errorf("Trying to create a private subnet (%s) in a public virtual network", cidr)
+		err := fmt.Errorf("trying to create a private subnet (%s) in a public virtual network", cidr)
 		klog.Error(err)
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func NewSubnet(vnetId, name, desc, cidr, gw, dns string, private bool, reserved,
 	for _, r := range reserved {
 		if r.First != "" && r.Last != "" {
 			if !s.IsValid(r.First) || !s.IsValid(r.Last) {
-				err := fmt.Errorf("Reserved IPv4 addresses %s are not part of %s CIDR", r, cidr)
+				err := fmt.Errorf("reserved IPv4 addresses %s are not part of %s CIDR", r, cidr)
 				klog.Error(err)
 				return nil, err
 			}
@@ -151,7 +151,7 @@ func NewSubnet(vnetId, name, desc, cidr, gw, dns string, private bool, reserved,
 	for _, g := range gwPool {
 		if g.First != "" && g.Last != "" {
 			if !s.IsValid(g.First) || !s.IsValid(g.Last) {
-				err := fmt.Errorf("Gateway Pool IPv4 addresses %s are not part of %s CIDR", g, cidr)
+				err := fmt.Errorf("gateway pool IPv4 addresses %s are not part of %s CIDR", g, cidr)
 				klog.Error(err)
 				return nil, err
 			}
@@ -190,11 +190,7 @@ func ReservePrivateSubnet(regionId, projectId string, subnetSize int) (string, e
 
 	// start by looking for an available subnet at the requested size
 	size := subnetSize
-	for {
-		if size <= SubnetMaximumNetMaskSize {
-			break
-		}
-
+	for size > SubnetMaximumNetMaskSize {
 		for _, vid := range r.VNets() {
 			v, err := r.VNet(vid)
 			if err != nil {
@@ -237,7 +233,7 @@ func ReservePrivateSubnet(regionId, projectId string, subnetSize int) (string, e
 		// no such subnet available, trying to find one with a larger mask
 		size -= 1
 	}
-	return "", fmt.Errorf("Unable to assign a private /%d VPC subnet. None available.", subnetSize)
+	return "", fmt.Errorf("unable to assign a private /%d VPC subnet. None available", subnetSize)
 }
 
 func FindSubnets() []Subnet {
@@ -390,7 +386,7 @@ func (s *Subnet) IsValidGwPool() error {
 		}
 
 		if poolSize < len(r.Zones()) {
-			err := fmt.Errorf("Reserved gateway pool size (%d) is smaller than region's zones count (%d)", poolSize, len(r.Zones()))
+			err := fmt.Errorf("reserved gateway pool size (%d) is smaller than region's zones count (%d)", poolSize, len(r.Zones()))
 			klog.Error(err)
 			return err
 		}
@@ -474,7 +470,7 @@ func (s *Subnet) Update(name, desc, gw, dns string, reserved, gwPool []sdk.IpRan
 	for _, r := range reserved {
 		if r.First != "" && r.Last != "" {
 			if !s.IsValid(r.First) || !s.IsValid(r.Last) {
-				err := fmt.Errorf("Reserved IPv4 addresses %s are not part of %s CIDR", r, s.CIDR)
+				err := fmt.Errorf("reserved IPv4 addresses %s are not part of %s CIDR", r, s.CIDR)
 				klog.Error(err)
 				return err
 			}
@@ -487,7 +483,7 @@ func (s *Subnet) Update(name, desc, gw, dns string, reserved, gwPool []sdk.IpRan
 	for _, g := range gwPool {
 		if g.First != "" && g.Last != "" {
 			if !s.IsValid(g.First) || !s.IsValid(g.Last) {
-				err := fmt.Errorf("Gateway Pool IPv4 addresses %s are not part of %s CIDR", g, s.CIDR)
+				err := fmt.Errorf("gateway pool IPv4 addresses %s are not part of %s CIDR", g, s.CIDR)
 				klog.Error(err)
 				return err
 			}

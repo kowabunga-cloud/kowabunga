@@ -39,7 +39,6 @@ require (
 	github.com/wagslane/go-password-validator v0.3.0
 	go.mongodb.org/mongo-driver v1.17.3
 	golang.org/x/crypto v0.37.0
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
 	gopkg.in/mail.v2 v2.3.1
 	gopkg.in/yaml.v3 v3.0.1
 	libvirt.org/go/libvirtxml v1.11001.0
@@ -92,6 +91,7 @@ require (
 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.uber.org/mock v0.5.2 // indirect
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/lint v0.0.0-20241112194109-818c5a804067 // indirect
 	golang.org/x/mod v0.24.0 // indirect
