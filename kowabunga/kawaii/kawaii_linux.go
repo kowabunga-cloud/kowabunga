@@ -39,15 +39,15 @@ func SetXFRMInterfaces(metadata *metadata.InstanceMetadata, args ...any) error {
 		}
 		err := handle.LinkAdd(itf)
 		if err != nil && err.Error() != ErrNetlinkLinkAlreadyExist {
-			return fmt.Errorf("Failed to create XFRM %d interface : %w", xfrmIndex, err)
+			return fmt.Errorf("failed to create XFRM %d interface : %w", xfrmIndex, err)
 		}
 		err = handle.LinkSetUp(itf)
 		if err != nil && err.Error() != ErrNetlinkLinkAlreadyExist {
-			return fmt.Errorf("Failed to set XFRM %d interface Up : %w", xfrmIndex, err)
+			return fmt.Errorf("dailed to set XFRM %d interface Up : %w", xfrmIndex, err)
 		}
 		dest, err := netlink.ParseIPNet(ipsec.RemoteSubnet)
 		if err != nil {
-			return fmt.Errorf("Failed to parse remote_subnet from metadata")
+			return fmt.Errorf("failed to parse remote_subnet from metadata")
 		}
 		linkList, err := handle.LinkList()
 		if err != nil {
