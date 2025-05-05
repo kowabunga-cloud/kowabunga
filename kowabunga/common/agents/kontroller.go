@@ -31,7 +31,7 @@ type KowabungaSysctlSetting struct {
 
 type KowabungaKontrollerAgent struct {
 	*KowabungaAgent
-	services map[string]*ManagedService
+	externalServices map[string]*ManagedService
 }
 
 func NewKowabungaKontrollerAgent(services map[string]*ManagedService) (*KowabungaKontrollerAgent, error) {
@@ -42,8 +42,8 @@ func NewKowabungaKontrollerAgent(services map[string]*ManagedService) (*Kowabung
 	}
 
 	agent := &KowabungaKontrollerAgent{
-		KowabungaAgent: NewKowabungaAgent(settings.ControllerAgentID, common.KowabungaControllerAgent, settings.ControllerEndpoint, settings.ControllerAgentToken),
-		services:       services,
+		KowabungaAgent:   NewKowabungaAgent(settings.ControllerAgentID, common.KowabungaControllerAgent, settings.ControllerEndpoint, settings.ControllerAgentToken),
+		externalServices: services,
 	}
 
 	err = agent.RegisterServices(newKontroller(agent))

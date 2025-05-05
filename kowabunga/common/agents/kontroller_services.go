@@ -58,7 +58,10 @@ func (k *Kontroller) Reload(args *KontrollerReloadArgs, reply *KontrollerReloadR
 		return err
 	}
 
-	for _, svc := range k.agent.services {
+	// start reloading internal built-in services, if any ...
+
+	// then reload external ones, if any
+	for _, svc := range k.agent.externalServices {
 		var err error
 		svcRestartRequired := false
 

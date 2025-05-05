@@ -7,9 +7,6 @@
 package konvey
 
 import (
-	"fmt"
-
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents/templates"
 )
@@ -50,47 +47,5 @@ var konveyServices = map[string]*agents.ManagedService{
 }
 
 func Daemonize() error {
-	lb, err := NewNetworkLoadBalancer()
-	if err != nil {
-		return err
-	}
-
-	// err = lb.Start()
-	// if err != nil {
-	// 	return err
-	// }
-
-	settings, err := common.GetCloudInitMetadataDataSettings()
-	if err != nil {
-		return err
-	}
-
-	meta, err := common.GetInstanceMetadata(settings)
-	if err != nil {
-		return err
-	}
-
-	if meta.Konvey == nil {
-		return fmt.Errorf("No Konvey-specific instance metadata")
-	}
-
-	err = lb.Reload(meta)
-	if err != nil {
-		return err
-	}
-
-	err = lb.Stop()
-	if err != nil {
-		return err
-	}
-
-	err = lb.Shutdown()
-	if err != nil {
-		return err
-	}
-
-	//return NewTraefikLayer4LoadBalancer()
-	//return agents.KontrollerDaemon(konveyServices, []agents.KowabungaSysctlSetting{})
-
-	return nil
+	return agents.KontrollerDaemon(konveyServices, []agents.KowabungaSysctlSetting{})
 }
