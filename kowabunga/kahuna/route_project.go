@@ -120,7 +120,7 @@ func (s *ProjectService) CreateProjectZoneInstance(ctx context.Context, projectI
 	}
 
 	// create instance
-	i, err := NewInstance(prj.String(), h.String(), instance.Name, instance.Description, "", "", instance.Vcpus, instance.Memory, instance.Adapters, instance.Volumes)
+	i, err := NewInstance(prj.String(), h.String(), instance.Name, instance.Description, "", "", instance.Vcpus, instance.Memory, instance.Adapters, instance.Volumes, nil)
 	if err != nil {
 		return HttpServerError(err)
 	}
@@ -206,7 +206,7 @@ func (s *ProjectService) CreateProjectZoneKompute(ctx context.Context, projectId
 	//
 
 	// create Kompute
-	k, err := NewKompute(prj.String(), zone.String(), h.String(), p.String(), t.String(), kompute.Name, kompute.Description, "", "", kompute.Vcpus, kompute.Memory, kompute.Disk, kompute.DataDisk, public, []string{})
+	k, err := NewKompute(prj.String(), zone.String(), h.String(), p.String(), t.String(), kompute.Name, kompute.Description, "", "", kompute.Vcpus, kompute.Memory, kompute.Disk, kompute.DataDisk, public, []string{}, nil)
 	if err != nil {
 		return HttpServerError(err)
 	}
@@ -587,6 +587,28 @@ func (s *ProjectService) CreateProjectRegionKonvey(ctx context.Context, projectI
 
 	return CreateProjectKonvey(p.String(), r.String(), konveyName, konvey, kaktusIds)
 }
+
+//	func (s *ProjectService) CreateProjectRegionTalos(ctx context.Context, projectId string, regionId string, kawaii sdk.Talos) (sdk.ImplResponse, error) {
+//		LogHttpRequest(RA("projectId", projectId), RA("regionId", regionId), RA("talos", talos))
+//		// ensure project exists
+//		p, err := FindProjectByID(projectId)
+//		if err != nil {
+//			return HttpNotFound(err)
+//		}
+//		// ensure region exists
+//		r, err := FindRegionByID(regionId)
+//		if err != nil {
+//			return HttpNotFound(err)
+//		}
+//		// Create Kawaii
+//		k, err := NewTalos(p.String(), r.String(), talosName, talos.Description)
+//		if err != nil {
+//			return HttpServerError(err)
+//		}
+//		payload := k.Model()
+//		LogHttpResponse(payload)
+//		return HttpCreated(payload)
+//	}
 
 func (s *ProjectService) CreateProjectRegionVolume(ctx context.Context, projectId string, regionId string, volume sdk.Volume, poolId string, templateId string) (sdk.ImplResponse, error) {
 	LogHttpRequest(RA("projectId", projectId), RA("regionId", regionId), RA("volume", volume), RA("pooId", poolId), RA("templateId", templateId))

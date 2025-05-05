@@ -186,7 +186,7 @@ func NewMultiZonesResource(projectId, regionId, namePrefix, desc, profile, profi
 
 		// spin-up instances
 		kompute, err := NewKompute(projectId, zoneId, h.String(), poolId, templateId,
-			name, desc, mzr.Profile, profileId, cpu, mem, disk, 0, false, subnetPeerings)
+			name, desc, mzr.Profile, profileId, cpu, mem, disk, 0, false, subnetPeerings, nil)
 		if err != nil {
 			for _, komputeId := range komputes {
 				komputeToDel, err := FindKomputeByID(komputeId)

@@ -27,6 +27,7 @@ const (
 	CloudinitProfileLinux   = "linux"
 	CloudinitProfileKawaii  = "kawaii"
 	CloudinitProfileKonvey  = "konvey"
+	CloudinitProfileTalos   = "talos"
 	CloudinitProfileWindows = "windows"
 	CloudInitVolumeSuffix   = "-cloudinit"
 )
@@ -85,17 +86,28 @@ func (ci *CloudInit) SetData(src, dst string, values any) error {
 }
 
 type UserDataSettings struct {
-	Hostname          string
-	Domain            string
-	RootPassword      string
-	ServiceUser       string
-	ServiceUserPubKey string
-	Profile           string
-	MetadataAlias     string
-	InterfacesSubnet  map[string]Subnet
+	Hostname                 string
+	Domain                   string
+	RootPassword             string
+	ServiceUser              string
+	ServiceUserPubKey        string
+	Profile                  string
+	MetadataAlias            string
+	InterfacesSubnet         map[string]Subnet
+	ExtraParentCloudInitData ExtraParentCloudInitData
 }
 
-func (ci *CloudInit) SetUserData(name, domain, pwd, user, pubkey, profile string, adapters []string) error {
+type ExtraParentCloudInitData struct {
+	Talos  TalosCloudInitData
+	Kawaii map[string]any
+}
+
+type TalosCloudInitData struct {
+	TalosVIP      string
+	MachineConfig string
+}
+
+func (ci *CloudInit) SetUserData(name, domain, pwd, user, pubkey, profile string, adapters []string, extra *ExtraParentCloudInitData) error {
 	metadataAlias := fmt.Sprintf(`#!/bin/bash
 
 KW_ENDPOINT="$(cloud-init query ds.meta_data.kowabunga_metadata_uri)"
@@ -106,13 +118,14 @@ curl -s ${KW_ENDPOINT} -H "%s: ${KW_LOCAL_IP}" -H "%s: ${KW_INSTANCE_ID}"
 `, common.HttpHeaderKowabungaSourceIP, common.HttpHeaderKowabungaInstanceID)
 
 	data := UserDataSettings{
-		Hostname:          name,
-		Domain:            domain,
-		RootPassword:      pwd,
-		ServiceUser:       user,
-		ServiceUserPubKey: pubkey,
-		Profile:           profile,
-		MetadataAlias:     metadataAlias,
+		Hostname:                 name,
+		Domain:                   domain,
+		RootPassword:             pwd,
+		ServiceUser:              user,
+		ServiceUserPubKey:        pubkey,
+		Profile:                  profile,
+		MetadataAlias:            metadataAlias,
+		ExtraParentCloudInitData: *extra,
 	}
 	tpl := GetCfg().CloudInit.Linux.UserData
 	routesByInterface := make(map[string]Subnet)

@@ -4,6 +4,7 @@
 # https://cloudinit.readthedocs.io/en/latest/topics/examples.html
 # Rerun Cloud init from scratch:
 # sudo cloud-init clean --logs; sudo cloud-init init --local; sudo cloud-init init; sudo cloud-init modules --mode=config; sudo cloud-init modules --mode=final
+{{ if ne .Profile "talos" }}
 ssh_pwauth: false
 disable_root: false
 hostname: {{ .Hostname }}
@@ -72,3 +73,7 @@ write_files:
   content: {{ .MetadataAlias | b64encode }}
   path: /usr/bin/kw-meta
   permissions: '0755'
+{{/* If Talos */}}
+{{ else }}
+{{ .TalosData }}
+{{ end }}

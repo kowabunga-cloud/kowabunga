@@ -50,7 +50,7 @@ func KomputeMigrateSchema() error {
 	return nil
 }
 
-func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profile, profileId string, cpu, mem, disk, data int64, public bool, subnetPeerings []string) (*Kompute, error) {
+func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profile, profileId string, cpu, mem, disk, data int64, public bool, subnetPeerings []string, extraParentCloudinitData *ExtraParentCloudInitData) (*Kompute, error) {
 
 	// ensure we have a rightful hostname, if any
 	if !VerifyHostname(name) {
@@ -166,7 +166,7 @@ func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profi
 
 	// create an new instance with all associated settings
 	klog.Debugf("Creating new instance for %s", name)
-	instance, err := NewInstance(projectId, hostId, name, desc, profile, profileId, cpu, mem, adapters, volumes)
+	instance, err := NewInstance(projectId, hostId, name, desc, profile, profileId, cpu, mem, adapters, volumes, extraParentCloudinitData)
 	if err != nil {
 		_ = osVolume.Delete()
 		if dataVolume != nil {

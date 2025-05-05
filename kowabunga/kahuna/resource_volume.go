@@ -132,13 +132,13 @@ func NewVolume(projectId, poolId, templateId, name, desc, tp string, size int64)
 	return &v, nil
 }
 
-func buildLocalCloudInitImage(projectId, zoneId, instanceId, agentId, instanceName, instanceIP, osType, password, profile, domain, user, pubkey string, adapters []string) (*CloudInit, error) {
+func buildLocalCloudInitImage(projectId, zoneId, instanceId, agentId, instanceName, instanceIP, osType, password, profile, domain, user, pubkey string, adapters []string, extra *ExtraParentCloudInitData) (*CloudInit, error) {
 	ci, err := NewCloudInit(instanceName, osType)
 	if err != nil {
 		return nil, err
 	}
 
-	err = ci.SetUserData(instanceName, domain, password, user, pubkey, profile, adapters)
+	err = ci.SetUserData(instanceName, domain, password, user, pubkey, profile, adapters, extra)
 	if err != nil {
 		klog.Error(err)
 		return ci, err
@@ -164,14 +164,14 @@ func buildLocalCloudInitImage(projectId, zoneId, instanceId, agentId, instanceNa
 	return ci, nil
 }
 
-func NewCloudInitVolume(projectId, zoneId, poolId, instanceId, agentId, instanceName, instanceIP, osType, password, profile string, adapters []string) (*Volume, error) {
+func NewCloudInitVolume(projectId, zoneId, poolId, instanceId, agentId, instanceName, instanceIP, osType, password, profile string, adapters []string, extra *ExtraParentCloudInitData) (*Volume, error) {
 	prj, err := FindProjectByID(projectId)
 	if err != nil {
 		return nil, err
 	}
 
 	ci, err := buildLocalCloudInitImage(projectId, zoneId, instanceId, agentId, instanceName, instanceIP, osType,
-		password, profile, prj.Domain, prj.BootstrapUser, prj.BootstrapPubkey, adapters)
+		password, profile, prj.Domain, prj.BootstrapUser, prj.BootstrapPubkey, adapters, extra)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func NewCloudInitVolume(projectId, zoneId, poolId, instanceId, agentId, instance
 
 // Updates the Cloud Init ISO of a defined instance ID
 // This does not create a new volume
-func UpdateCloudInitIso(instanceID string) error {
+func UpdateCloudInitIso(instanceID string, extra *ExtraParentCloudInitData) error {
 
 	// Get our useful resources
 	i, err := FindInstanceByID(instanceID)
@@ -218,7 +218,7 @@ func UpdateCloudInitIso(instanceID string) error {
 	}
 
 	// Create our new ISO based on our existing instances
-	ci, err := buildLocalCloudInitImage(i.ProjectID, z.String(), i.String(), i.AgentID, i.Name, i.LocalIP, v.Type, i.RootPassword, i.Profile, prj.Domain, prj.BootstrapUser, prj.BootstrapPubkey, i.Adapters())
+	ci, err := buildLocalCloudInitImage(i.ProjectID, z.String(), i.String(), i.AgentID, i.Name, i.LocalIP, v.Type, i.RootPassword, i.Profile, prj.Domain, prj.BootstrapUser, prj.BootstrapPubkey, i.Adapters(), extra)
 	if err != nil {
 		return err
 	}

@@ -158,7 +158,7 @@ func NewHighAvailableResource(projectId, regionId, namePrefix, desc, profile, pr
 
 		// spin-up instance
 		kompute, err := NewKompute(projectId, z.String(), h.String(), poolId, templateId,
-			name, desc, har.Profile, profileId, cpu, mem, disk, 0, false, []string{})
+			name, desc, har.Profile, profileId, cpu, mem, disk, 0, false, []string{}, nil)
 		if err != nil {
 			for _, komputeId := range komputes {
 				komputeToDel, err := FindKomputeByID(komputeId)

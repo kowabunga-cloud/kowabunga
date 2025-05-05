@@ -184,7 +184,7 @@ func (i *Instance) NewDiskMap(volumes []string) (map[string]string, error) {
 	return disks, nil
 }
 
-func NewInstance(projectId, kaktusId, name, desc, profile, profileId string, cpu, mem int64, adapters, volumes []string) (*Instance, error) {
+func NewInstance(projectId, kaktusId, name, desc, profile, profileId string, cpu, mem int64, adapters, volumes []string, extraParentCloudinitData *ExtraParentCloudInitData) (*Instance, error) {
 	// ensure we have a rightful hostname, if any
 	if !VerifyHostname(name) {
 		err := fmt.Errorf("invalid host name: %s", name)
@@ -266,7 +266,7 @@ func NewInstance(projectId, kaktusId, name, desc, profile, profileId string, cpu
 		}
 	}
 
-	err = instance.CreateCloudInitVolume()
+	err = instance.CreateCloudInitVolume(extraParentCloudinitData)
 	if err != nil {
 		klog.Error(err)
 		return nil, err
@@ -449,7 +449,7 @@ func (i *Instance) GetOsVolume() (*Volume, error) {
 	return osVolume, nil
 }
 
-func (i *Instance) CreateCloudInitVolume() error {
+func (i *Instance) CreateCloudInitVolume(extraParentCloudInitData *ExtraParentCloudInitData) error {
 	osVolume, err := i.GetOsVolume()
 	if err != nil {
 		return err
@@ -473,7 +473,7 @@ func (i *Instance) CreateCloudInitVolume() error {
 
 	// if no cloud-init volume exists for this instance, create one
 	if (osTemplate.OS == TemplateOsLinux || osTemplate.OS == TemplateOsWindows) && i.CloudInitVolumeId == "" {
-		v, err := NewCloudInitVolume(osVolume.ProjectID, z.String(), osVolume.StoragePoolID, i.String(), i.AgentID, i.Name, i.LocalIP, osTemplate.OS, i.RootPassword, i.Profile, i.Adapters())
+		v, err := NewCloudInitVolume(osVolume.ProjectID, z.String(), osVolume.StoragePoolID, i.String(), i.AgentID, i.Name, i.LocalIP, osTemplate.OS, i.RootPassword, i.Profile, i.Adapters(), extraParentCloudInitData)
 		if err != nil {
 			return err
 		}
