@@ -18,7 +18,7 @@ import (
 const (
 	EmailProductName      = "Kowabunga"
 	EmailProductLink      = "htps://github.com/kowabunga-cloud/kowabunga"
-	EmailProductLogoURL   = "https://storage.de.cloud.ovh.net/v1/AUTH_85c721b6b20c4d1b8a59f0307e78889e/public/kowabunga-medium.png"
+	EmailProductLogoURL   = "https://raw.githubusercontent.com/kowabunga-cloud/infographics/master/art/kowabunga-title-white.png"
 	EmailProductCopyright = "Copyright (c) The Kowabunga Project. All rights reserved."
 
 	EmailCharacteristic = "Characteristic"
