@@ -693,18 +693,21 @@ func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes [
 	}
 
 	hasChanged := false
+	requireReboot := false
 	cpuDelta := cpu - i.CPU
 	memDelta := mem - i.Memory
 	if cpu != i.CPU {
 		i.CPU = cpu
 		d.SetCPU(i.CPU)
 		hasChanged = true
+		requireReboot = true
 	}
 
 	if mem != i.Memory {
 		i.Memory = mem
 		d.SetMemory(i.Memory)
 		hasChanged = true
+		requireReboot = true
 	}
 
 	// check if list of adapters has changed
@@ -714,6 +717,48 @@ func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes [
 	}
 
 	if !reflect.DeepEqual(i.Interfaces, interfaces) {
+		state, err := i.GetState()
+		if err != nil {
+			return err
+		}
+		if state.State != kaktus.DomainStatusRunning {
+			requireReboot = true
+		} else {
+			for k, itf := range i.Interfaces {
+				_, ok := interfaces[k]
+				if !ok || (ok && interfaces[k] != i.Interfaces[k]) {
+					xmlItfToRm, err := generateXMLVirtualInterface(itf)
+					if err != nil {
+						continue
+					}
+					itfToRm, err := XmlMarshal(xmlItfToRm)
+					if err != nil {
+						continue
+					}
+					err = i.HotDetachDevice(itfToRm)
+					if err != nil {
+						continue
+					}
+				}
+			}
+			for k, itf := range interfaces {
+				_, ok := i.Interfaces[k]
+				if (ok && interfaces[k] != i.Interfaces[k]) || !ok {
+					xmlItfToAdd, err := generateXMLVirtualInterface(itf)
+					if err != nil {
+						continue
+					}
+					itfToAdd, err := XmlMarshal(xmlItfToAdd)
+					if err != nil {
+						continue
+					}
+					err = i.HotAttachDevice(itfToAdd)
+					if err != nil {
+						continue
+					}
+				}
+			}
+		}
 		i.Interfaces = interfaces
 		// discover and attach interfaces/adapters
 		d.SetInterfaces(i.Interfaces)
@@ -747,21 +792,22 @@ func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes [
 		}
 
 		// reboot instance for settings to take effect
-		err = i.Shutdown()
-		if err != nil {
-			klog.Error(err)
-		}
+		if requireReboot {
+			err = i.Shutdown()
+			if err != nil {
+				klog.Error(err)
+			}
 
-		err = i.Stop()
-		if err != nil {
-			klog.Error(err)
-		}
+			err = i.Stop()
+			if err != nil {
+				klog.Error(err)
+			}
 
-		err = i.Start()
-		if err != nil {
-			klog.Error(err)
+			err = i.Start()
+			if err != nil {
+				klog.Error(err)
+			}
 		}
-
 		// update instance cost details
 		azr, err := i.AverageZoneResources()
 		if err != nil {
@@ -976,14 +1022,15 @@ func (i *Instance) IsRunning() bool {
 	return reply.Running
 }
 
-func (i *Instance) operation(action string, op kaktus.KaktusInstanceOperation) error {
+func (i *Instance) operation(action string, extraArgs []string, op kaktus.KaktusInstanceOperation) error {
 	if action != "" {
 		klog.Infof("%s instance %s (%s)", action, i.String(), i.Name)
 	}
 
 	args := kaktus.KaktusInstanceOperationArgs{
-		Name:   i.Name,
-		Action: op,
+		Name:      i.Name,
+		Action:    op,
+		ExtraArgs: extraArgs,
 	}
 	var reply kaktus.KaktusInstanceOperationReply
 
@@ -997,40 +1044,71 @@ func (i *Instance) operation(action string, op kaktus.KaktusInstanceOperation) e
 
 // Software OS reboot
 func (i *Instance) Reboot() error {
-	return i.operation("Rebooting", kaktus.KaktusInstanceOpSoftReboot)
+	return i.operation("Rebooting", nil, kaktus.KaktusInstanceOpSoftReboot)
 }
 
 // Hardware Reset
 func (i *Instance) Reset() error {
-	return i.operation("Hardware reset of", kaktus.KaktusInstanceOpHardReboot)
+	return i.operation("Hardware reset of", nil, kaktus.KaktusInstanceOpHardReboot)
 }
 
 // Software PM Suspend
 func (i *Instance) Suspend() error {
-	return i.operation("Suspending", kaktus.KaktusInstanceOpPmSuspend)
+	return i.operation("Suspending", nil, kaktus.KaktusInstanceOpPmSuspend)
 }
 
 // Software PM Resume
 func (i *Instance) Resume() error {
-	return i.operation("Resuming", kaktus.KaktusInstanceOpPmResume)
+	return i.operation("Resuming", nil, kaktus.KaktusInstanceOpPmResume)
 }
 
 // Enable auto-start
 func (i *Instance) AutoStart() error {
-	return i.operation("", kaktus.KaktusInstanceOpAutoStart)
+	return i.operation("", nil, kaktus.KaktusInstanceOpAutoStart)
 }
 
 // Hardware Boot
 func (i *Instance) Start() error {
-	return i.operation("Starting", kaktus.KaktusInstanceOpStart)
+	return i.operation("Starting", nil, kaktus.KaktusInstanceOpStart)
 }
 
 // Hardware Shutdown
 func (i *Instance) Stop() error {
-	return i.operation("Stopping", kaktus.KaktusInstanceOpHardShutdown)
+	return i.operation("Stopping", nil, kaktus.KaktusInstanceOpHardShutdown)
 }
 
 // Software Shutdown
 func (i *Instance) Shutdown() error {
-	return i.operation("Shutting down", kaktus.KaktusInstanceOpSoftShutdown)
+	return i.operation("Shutting down", nil, kaktus.KaktusInstanceOpSoftShutdown)
+}
+
+// Attach Hot Device
+func (i *Instance) HotAttachDevice(XML string) error {
+	return i.operation("Attaching new device to instance", []string{XML}, kaktus.KaktusInstanceHotAttachDevice)
+}
+
+// Detach Hot Device
+func (i *Instance) HotDetachDevice(XML string) error {
+	return i.operation("Detaching device to instance", []string{XML}, kaktus.KaktusInstanceHotDetachDevice)
+}
+
+func (i *Instance) AddAdapter(slotNumber uint, a *Adapter) error {
+	device := fmt.Sprintf("%s%d", AdapterOsNicLinuxPrefix, slotNumber)
+	if _, ok := i.Interfaces[device]; ok {
+		return fmt.Errorf("Adapter slot is already taken: %s", device)
+	}
+	i.Interfaces[device] = a.String()
+	i.Save()
+	return nil
+}
+
+func (i *Instance) RemoveAdapter(slotNumber uint, a *Adapter) error {
+	device := fmt.Sprintf("%s%d", AdapterOsNicLinuxPrefix, slotNumber)
+	if _, ok := i.Interfaces[device]; !ok {
+		return fmt.Errorf("Adapter does not exist on the specified slot: %s", device)
+	}
+	a.Delete()
+	delete(i.Interfaces, device)
+	i.Save()
+	return nil
 }

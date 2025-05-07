@@ -18,6 +18,7 @@ import (
 	"slices"
 	"sort"
 
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 )
 
@@ -100,7 +101,7 @@ func (mzr *MultiZonesResource) FindLocalPrivateIPs() ([]string, error) {
 	return localPrivateIps, nil
 }
 
-func NewMultiZonesResource(projectId, regionId, namePrefix, desc, profile, profileId string, cpu, mem, disk, data int64, publicSubnetId string, subnetPeerings []string) (*MultiZonesResource, error) {
+func NewMultiZonesResource(projectId, regionId, namePrefix, desc, profile, profileId string, cpu, mem, disk, data int64, publicSubnetId string) (*MultiZonesResource, error) {
 
 	// find parent objects, allows to bail before creating anything
 	prj, err := FindProjectByID(projectId)
@@ -186,7 +187,7 @@ func NewMultiZonesResource(projectId, regionId, namePrefix, desc, profile, profi
 
 		// spin-up instances
 		kompute, err := NewKompute(projectId, zoneId, h.String(), poolId, templateId,
-			name, desc, mzr.Profile, profileId, cpu, mem, disk, 0, false, subnetPeerings)
+			name, desc, mzr.Profile, profileId, cpu, mem, disk, 0, false)
 		if err != nil {
 			for _, komputeId := range komputes {
 				komputeToDel, err := FindKomputeByID(komputeId)
@@ -443,6 +444,29 @@ func (mzr *MultiZonesResource) GetVirtualIPs() error {
 		}
 	}
 	return nil
+}
+
+func (mzr *MultiZonesResource) Update() {
+	for _, komputeId := range mzr.KomputeIDs {
+		kompute, err := FindKomputeByID(komputeId)
+		if err != nil {
+			continue
+		}
+		i, err := kompute.Instance()
+		if err != nil {
+			continue
+		}
+		err = kompute.Update(kompute.Name, kompute.Description, i.CPU, i.Memory, 0, 0)
+		if err != nil {
+			continue
+		}
+		args := agents.KontrollerReloadArgs{}
+		var reply agents.KontrollerReloadReply
+		err = i.InstanceRPC("Reload", args, &reply)
+		if err != nil {
+			continue
+		}
+	}
 }
 
 func (mzr *MultiZonesResource) Save() {

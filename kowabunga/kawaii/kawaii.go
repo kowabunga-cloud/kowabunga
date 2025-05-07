@@ -80,6 +80,11 @@ var kawaiiServices = map[string]*agents.ManagedService{
 		},
 		Reload: []func(metadata *metadata.InstanceMetadata, args ...any) error{swanctlReload},
 	},
+	"peeringKontroller": {
+		User:  "root",
+		Group: "root",
+		Pre:   []func(metadata *metadata.InstanceMetadata, args ...any) error{},
+	},
 }
 
 var kawaiiSysctlSettings = []agents.KowabungaSysctlSetting{

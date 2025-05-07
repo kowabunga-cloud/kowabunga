@@ -242,8 +242,9 @@ func (k *Kaktus) GetInstanceRemoteConnectionUrl(args *KaktusGetInstanceRemoteCon
  */
 
 type KaktusInstanceOperationArgs struct {
-	Name   string
-	Action KaktusInstanceOperation
+	Name      string
+	Action    KaktusInstanceOperation
+	ExtraArgs []string
 }
 
 type KaktusInstanceOperationReply struct{}
@@ -259,6 +260,8 @@ const (
 	KaktusInstanceOpSoftShutdown
 	KaktusInstanceOpPmSuspend
 	KaktusInstanceOpPmResume
+	KaktusInstanceHotAttachDevice
+	KaktusInstanceHotDetachDevice
 )
 
 func (k *Kaktus) InstanceOperation(args *KaktusInstanceOperationArgs, reply *KaktusInstanceOperationReply) error {
@@ -281,8 +284,17 @@ func (k *Kaktus) InstanceOperation(args *KaktusInstanceOperationArgs, reply *Kak
 		return k.agent.lcs.SuspendInstance(args.Name)
 	case KaktusInstanceOpPmResume:
 		return k.agent.lcs.ResumeInstance(args.Name)
+	case KaktusInstanceHotAttachDevice:
+		if len(args.ExtraArgs) != 1 {
+			return fmt.Errorf("Missing XML device definition to attach")
+		}
+		return k.agent.lcs.DomainAttachDevice(args.Name, args.ExtraArgs[0])
+	case KaktusInstanceHotDetachDevice:
+		if len(args.ExtraArgs) != 1 {
+			return fmt.Errorf("Missing XML device definition to detach")
+		}
+		return k.agent.lcs.DomainDetachDevice(args.Name, args.ExtraArgs[0])
 	}
-
 	return fmt.Errorf("unsupported instance operation: %d", args.Action)
 }
 

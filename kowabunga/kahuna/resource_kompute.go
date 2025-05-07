@@ -50,7 +50,7 @@ func KomputeMigrateSchema() error {
 	return nil
 }
 
-func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profile, profileId string, cpu, mem, disk, data int64, public bool, subnetPeerings []string) (*Kompute, error) {
+func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profile, profileId string, cpu, mem, disk, data int64, public bool) (*Kompute, error) {
 
 	// ensure we have a rightful hostname, if any
 	if !VerifyHostname(name) {
@@ -141,28 +141,28 @@ func NewKompute(projectId, zoneId, hostId, poolId, templateId, name, desc, profi
 	}
 	adapters = append(adapters, privateAdapter.String())
 
-	// optionally create extra private network interfaces on peering subnets for Kawaii (auto-assigned private IPv4)
-	for _, spId := range subnetPeerings {
-		spAdapterName := fmt.Sprintf("%s-peering-private-adapter", name)
-		spAdapterDescription := fmt.Sprintf("Private peering network adapter for %s", name)
-		klog.Debugf("Creating peering private adapter for %s on subnet %s", name, spId)
-		spAdapter, err := NewAdapter(spId, spAdapterName, spAdapterDescription, "", []string{}, false, true)
-		if err != nil {
-			_ = osVolume.Delete()
-			if dataVolume != nil {
-				_ = dataVolume.Delete()
-			}
-			for _, adapterId := range adapters {
-				a, err := FindAdapterByID(adapterId)
-				if err != nil {
-					_ = a.Delete()
-				}
-			}
+	// // optionally create extra private network interfaces on peering subnets for Kawaii (auto-assigned private IPv4)
+	// for _, spId := range subnetPeerings {
+	// 	spAdapterName := fmt.Sprintf("%s-peering-private-adapter", name)
+	// 	spAdapterDescription := fmt.Sprintf("Private peering network adapter for %s", name)
+	// 	klog.Debugf("Creating peering private adapter for %s on subnet %s", name, spId)
+	// 	spAdapter, err := NewAdapter(spId, spAdapterName, spAdapterDescription, "", []string{}, false, true)
+	// 	if err != nil {
+	// 		_ = osVolume.Delete()
+	// 		if dataVolume != nil {
+	// 			_ = dataVolume.Delete()
+	// 		}
+	// 		for _, adapterId := range adapters {
+	// 			a, err := FindAdapterByID(adapterId)
+	// 			if err != nil {
+	// 				_ = a.Delete()
+	// 			}
+	// 		}
 
-			return nil, err
-		}
-		adapters = append(adapters, spAdapter.String())
-	}
+	// 		return nil, err
+	// 	}
+	// 	adapters = append(adapters, spAdapter.String())
+	// }
 
 	// create an new instance with all associated settings
 	klog.Debugf("Creating new instance for %s", name)
@@ -249,6 +249,8 @@ func (k *Kompute) migrateSchemaV2() error {
 	return nil
 }
 
+// Setting `disk“ & `data` to 0 will not update the storage and leave it idle
+// only valid for updates
 func (k *Kompute) Update(name, desc string, cpu, mem, disk, data int64) error {
 	k.UpdateResourceDefaults(name, desc)
 
@@ -260,7 +262,7 @@ func (k *Kompute) Update(name, desc string, cpu, mem, disk, data int64) error {
 	// update disk sizes, if needed
 	osDiskDevice := fmt.Sprintf("%sa", VolumeOsDiskPrefix)
 	osDiskId, ok := i.Disks[osDiskDevice]
-	if ok {
+	if ok && disk != 0 {
 		osDisk, err := FindVolumeByID(osDiskId)
 		if err != nil {
 			return err
@@ -273,7 +275,7 @@ func (k *Kompute) Update(name, desc string, cpu, mem, disk, data int64) error {
 
 	dataDiskDevice := fmt.Sprintf("%sb", VolumeOsDiskPrefix)
 	dataDiskId, ok := i.Disks[dataDiskDevice]
-	if ok {
+	if ok && disk != 0 {
 		dataDisk, err := FindVolumeByID(dataDiskId)
 		if err != nil {
 			return err

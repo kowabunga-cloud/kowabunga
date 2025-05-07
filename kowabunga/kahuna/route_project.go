@@ -206,7 +206,7 @@ func (s *ProjectService) CreateProjectZoneKompute(ctx context.Context, projectId
 	//
 
 	// create Kompute
-	k, err := NewKompute(prj.String(), zone.String(), h.String(), p.String(), t.String(), kompute.Name, kompute.Description, "", "", kompute.Vcpus, kompute.Memory, kompute.Disk, kompute.DataDisk, public, []string{})
+	k, err := NewKompute(prj.String(), zone.String(), h.String(), p.String(), t.String(), kompute.Name, kompute.Description, "", "", kompute.Vcpus, kompute.Memory, kompute.Disk, kompute.DataDisk, public)
 	if err != nil {
 		return HttpServerError(err)
 	}

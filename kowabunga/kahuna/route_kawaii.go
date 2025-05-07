@@ -27,7 +27,7 @@ func (s *KawaiiService) DeleteKawaii(ctx context.Context, kawaiiId string) (sdk.
 	}
 
 	if k.HasChildren() {
-		return HttpConflict(nil)
+		return HttpConflict(fmt.Errorf("kawaii has child resources that must be destroyed first."))
 	}
 	// remove Kawaii
 	err = k.Delete()
@@ -132,8 +132,49 @@ func (s *KawaiiService) UpdateKawaii(ctx context.Context, kawaiiId string, kawai
 		natRules = append(natRules, rule)
 	}
 
+	// Peerings
+	peerings := []KawaiiVpcPeering{}
+	for _, peering := range kawaii.VpcPeerings {
+		ingressRules := []KawaiiVpcForwardRule{}
+		egressRules := []KawaiiVpcForwardRule{}
+		netIPs := []KawaiiVpcNetIpZone{}
+		for _, rule := range peering.Ingress {
+			err := IsValidPortListExpression(rule.Ports)
+			if err != nil {
+				return HttpBadParams(err)
+			}
+			ingressRules = append(ingressRules, sdkVpcForwardRuleToObject(rule))
+		}
+		for _, rule := range peering.Egress {
+			err := IsValidPortListExpression(rule.Ports)
+			if err != nil {
+				return HttpBadParams(err)
+			}
+			egressRules = append(ingressRules, sdkVpcForwardRuleToObject(rule))
+		}
+		for _, netipZone := range netIPs {
+			netIPs = append(netIPs, KawaiiVpcNetIpZone{
+				PrivateIP: netipZone.PrivateIP,
+				Zone:      netipZone.Zone,
+			})
+		}
+		_, err := FindSubnetByID(peering.Subnet)
+		if err != nil {
+			return HttpBadParams(err)
+		}
+		newPeering := KawaiiVpcPeering{
+			SubnetID: peering.Subnet,
+			Ingress:  ingressRules,
+			Egress:   egressRules,
+			NetIP:    netIPs,
+		}
+		if peering.Policy == "" {
+			newPeering.Policy = KawaiiFirewallPolicyDrop
+		}
+		peerings = append(peerings, newPeering)
+	}
 	// update Kawaii
-	err = gw.Update(kawaii.Description, fw, natRules)
+	err = gw.Update(kawaii.Description, fw, natRules, peerings)
 	if err != nil {
 		return HttpServerError(err)
 	}
@@ -141,6 +182,13 @@ func (s *KawaiiService) UpdateKawaii(ctx context.Context, kawaiiId string, kawai
 	payload := gw.Model()
 	LogHttpResponse(payload)
 	return HttpOK(payload)
+}
+
+func sdkVpcForwardRuleToObject(rule sdk.KawaiiVpcForwardRule) KawaiiVpcForwardRule {
+	return KawaiiVpcForwardRule{
+		Protocol: rule.Protocol,
+		Ports:    rule.Ports,
+	}
 }
 
 // IPSEC Connection

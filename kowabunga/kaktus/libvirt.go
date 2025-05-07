@@ -34,6 +34,15 @@ const (
 	LibvirtDefaultPortTLS = 16514
 
 	LibvirtNoConnectionError = "no associated libvirt connection"
+
+	DomainStatusRunning   = "Running"
+	DomainStatusNoState   = "No State"
+	DomainStatusBlocked   = "Blocked"
+	DomainStatusPaused    = "Paused"
+	DomainStatusShutdown  = "Shutdown"
+	DomainStatusShutoff   = "Shutoff"
+	DomainStatusCrashed   = "Crashed"
+	DomainStatusSuspended = "PM Suspended"
 )
 
 type LibvirtConnectionSettings struct {
@@ -375,13 +384,13 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 
 	stateMap := map[int32]VirtDomainState{
 		int32(virt.DomainNostate): {
-			State: "No State",
+			State: DomainStatusNoState,
 			Reason: map[int32]string{
 				int32(virt.DomainNostateUnknown): "Unknown",
 			},
 		},
 		int32(virt.DomainRunning): {
-			State: "Running",
+			State: DomainStatusRunning,
 			Reason: map[int32]string{
 				int32(virt.DomainRunningUnknown):           "Unknown",
 				int32(virt.DomainRunningBooted):            "Booted",
@@ -397,13 +406,13 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 			},
 		},
 		int32(virt.DomainBlocked): {
-			State: "Blocked",
+			State: DomainStatusBlocked,
 			Reason: map[int32]string{
 				int32(virt.DomainBlockedUnknown): "Unknown",
 			},
 		},
 		int32(virt.DomainPaused): {
-			State: "Paused",
+			State: DomainStatusPaused,
 			Reason: map[int32]string{
 				int32(virt.DomainPausedUnknown):        "Unknown",
 				int32(virt.DomainPausedUser):           "User",
@@ -422,14 +431,14 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 			},
 		},
 		int32(virt.DomainShutdown): {
-			State: "Shutdown",
+			State: DomainStatusShutdown,
 			Reason: map[int32]string{
 				int32(virt.DomainShutdownUnknown): "Unknown",
 				int32(virt.DomainShutdownUser):    "User",
 			},
 		},
 		int32(virt.DomainShutoff): {
-			State: "Shutoff",
+			State: DomainStatusShutoff,
 			Reason: map[int32]string{
 				int32(virt.DomainShutoffUnknown):      "Unknown",
 				int32(virt.DomainShutoffShutdown):     "Shutdown",
@@ -443,14 +452,14 @@ func (lcs *LibvirtConnectionSettings) GetInstanceState(instanceName string) (str
 			},
 		},
 		int32(virt.DomainCrashed): {
-			State: "Crashed",
+			State: DomainStatusCrashed,
 			Reason: map[int32]string{
 				int32(virt.DomainCrashedUnknown):  "Unknown",
 				int32(virt.DomainCrashedPanicked): "Panicked",
 			},
 		},
 		int32(virt.DomainPmsuspended): {
-			State: "PM Suspended",
+			State: DomainStatusSuspended,
 			Reason: map[int32]string{
 				int32(virt.DomainPmsuspendedUnknown): "Unknown",
 			},
@@ -613,4 +622,49 @@ func (lcs *LibvirtConnectionSettings) ShutdownInstance(instanceName string) erro
 
 func xmlUnmarshal(input string, v any) error {
 	return xml.Unmarshal([]byte(input), v)
+}
+
+// Permanently Attach Hot Interface (requires an online instance)
+func (lcs *LibvirtConnectionSettings) DomainAttachDevice(instanceName string, XML string) error {
+	instance, err := lcs.getInstance(instanceName)
+	if err != nil {
+		klog.Error()
+		return err
+	}
+	if !lcs.IsInstanceRunning(instanceName) {
+		return fmt.Errorf("Cannot attach device on a running instance  %s ...", instance.Name)
+	}
+	err = lcs.Conn.DomainAttachDeviceFlags(*instance, XML, uint32(virt.DomainDeviceModifyLive|virt.DomainDeviceModifyConfig))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Permanently Detach Hot Device (requires an online instance)
+func (lcs *LibvirtConnectionSettings) DomainDetachDevice(instanceName string, XML string) error {
+	instance, err := lcs.getInstance(instanceName)
+	if err != nil {
+		return err
+	}
+	if !lcs.IsInstanceRunning(instanceName) {
+		return fmt.Errorf("Cannot detach device on a running instance  %s ...", instance.Name)
+	}
+	err = lcs.Conn.DomainDetachDeviceFlags(*instance, XML, uint32(virt.DomainDeviceModifyLive|virt.DomainDeviceModifyConfig))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (lcs *LibvirtConnectionSettings) test() {
+	dom, _ := lcs.getInstance("flex-ops-stg-job-2")
+	xml, _ := lcs.Conn.DomainGetXMLDesc(*dom, virt.DomainXMLSecure|virt.DomainXMLInactive|virt.DomainXMLUpdateCPU|virt.DomainXMLUpdateCPU)
+	klog.Errorf("XML : %s", xml)
+	d := virtxml.Domain{}
+	err := xmlUnmarshal(xml, &d)
+	if err != nil {
+		klog.Errorf(err.Error())
+		return
+	}
+	klog.Errorf("XML : %v", d)
 }

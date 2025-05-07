@@ -15,6 +15,7 @@ import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
+	virtxml "libvirt.org/go/libvirtxml"
 )
 
 const (
@@ -243,12 +244,14 @@ func NewKawaii(projectId, regionId, name, desc string, fw KawaiiFirewall, dnat [
 		VpcPeerings:    vpcPeerings,
 	}
 
-	mzr, err := NewMultiZonesResource(projectId, regionId, name, desc, CloudinitProfileKawaii, kawaii.String(), InternetGatewayCpu, InternetGatewayMemory, InternetGatewayDisk, 0, publicSubnet.String(), subnetPeerings)
+	mzr, err := NewMultiZonesResource(projectId, regionId, name, desc, CloudinitProfileKawaii, kawaii.String(), InternetGatewayCpu, InternetGatewayMemory, InternetGatewayDisk, 0, publicSubnet.String())
 	if err != nil {
 		return nil, err
 	}
 	kawaii.MultiZonesResourceID = mzr.String()
-
+	for _, vpcPeering := range vpcPeerings {
+		kawaii.AddPeering(vpcPeering.SubnetID)
+	}
 	klog.Debugf("Created new Kawaii %s", kawaii.String())
 	_, err = GetDB().Insert(MongoCollectionKawaiiName, kawaii)
 	if err != nil {
@@ -323,14 +326,27 @@ func (k *Kawaii) Project() (*Project, error) {
 	return prj, nil
 }
 
-func (k *Kawaii) Update(desc string, fw KawaiiFirewall, dnat []KawaiiDNatRule) error {
+func (k *Kawaii) Update(desc string, fw KawaiiFirewall, dnat []KawaiiDNatRule, vpcPeerings []KawaiiVpcPeering) error {
 	// TODO: in future, we'll need to support vnetPeerings update.
 	// This requires update of instance XML description to create/remove network adapters.
 
 	k.Description = desc
 	k.Firewall = fw
 	k.DNatRules = dnat
+
+	// START
+	// This needs to be reworked, as this is post-merged and this block may not make sense anymore
+	// with the introduced kompute realod call below
+	peeringToAdd, peeringsToDel := k.peeringDiff(vpcPeerings)
+	for _, p := range peeringsToDel {
+		k.RemovePeering(p)
+	}
+	for _, p := range peeringToAdd {
+		k.AddPeering(p)
+	}
+	k.VpcPeerings = vpcPeerings
 	k.Save()
+	// END
 
 	mzr, err := k.MZR()
 	if err != nil {
@@ -373,7 +389,9 @@ func (k *Kawaii) Delete() error {
 	if k.String() == ResourceUnknown {
 		return nil
 	}
-
+	for _, vpcPeering := range k.VpcPeerings {
+		k.RemovePeering(vpcPeering.SubnetID)
+	}
 	mzr, err := k.MZR()
 	if err != nil {
 		klog.Error(err)
@@ -756,4 +774,156 @@ func IPsecIngressRuleToMetadata(rule *KawaiiFirewallIngressRule) *metadata.Kawai
 
 func (k *Kawaii) HasChildren() bool {
 	return HasChildRefs(k.IPsecIDs)
+}
+
+func (k *Kawaii) AddPeering(peeringSubnetId string) error {
+	mzr, _ := k.MZR()
+	for _, komputeId := range mzr.KomputeIDs {
+		kompute, err := FindKomputeByID(komputeId)
+		if err != nil {
+			continue
+		}
+		i, err := kompute.Instance()
+		if err != nil {
+			continue
+		}
+		alreadyExists := false
+		for _, itf := range i.Interfaces {
+			adapter, err := FindAdapterByID(itf)
+			if err != nil {
+				return err
+			}
+			if adapter.SubnetID == peeringSubnetId {
+				alreadyExists = true
+				break
+			}
+		}
+		if !alreadyExists {
+			newPeeringAdapter, err := NewAdapter(peeringSubnetId, fmt.Sprintf("Peering %s", peeringSubnetId), fmt.Sprintf("Peering %s", peeringSubnetId), "", []string{}, false, true)
+			xmlItfToAdd, err := generateXMLVirtualInterface(newPeeringAdapter.String())
+			if err != nil {
+				return err
+			}
+			itfToAdd, err := XmlMarshal(xmlItfToAdd)
+			if err != nil {
+				return err
+			}
+			err = i.HotAttachDevice(itfToAdd)
+			if err != nil {
+				return err
+			}
+			xml, err := i.get(true)
+			domain := virtxml.Domain{}
+			err = XmlUnmarshal(xml, &domain)
+			if err != nil {
+				return err
+			}
+			//TODO: SUBNETID IS NOT A GOOD CHECK!!!!
+			var slotNumber uint
+			for _, itf := range domain.Devices.Interfaces {
+				if itf.Source.Bridge.Bridge == newPeeringAdapter.SubnetID {
+					slotNumber = *itf.Address.PCI.Slot
+				}
+			}
+			i.AddAdapter(slotNumber, newPeeringAdapter)
+		}
+	}
+	return nil
+}
+func (k *Kawaii) RemovePeering(peeringSubnetId string) error {
+	mzr, _ := k.MZR()
+	for _, komputeId := range mzr.KomputeIDs {
+		kompute, err := FindKomputeByID(komputeId)
+		if err != nil {
+			continue
+		}
+		i, err := kompute.Instance()
+		if err != nil {
+			continue
+		}
+		xml, err := i.get(true)
+		domain := virtxml.Domain{}
+		err = XmlUnmarshal(xml, &domain)
+		if err != nil {
+			return err
+		}
+
+		// TODO: Detach code
+		// alreadyExists := false
+		// var xmlInterfaceToDel virtxml.DomainInterface
+		// //TODO: SUBNETID IS NOT A GOOD CHECK!!!!
+		// for _, domainItf := range domain.Devices.Interfaces {
+		// 	if itf.Source.Bridge.Bridge == newPeeringAdapter.SubnetID {
+		// 		xmlInterfaceToDel = domainItf
+		// 	}
+		// }
+		// for _, itf := range i.Interfaces {
+		// 	adapter, err := FindAdapterByID(itf)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	if adapter.SubnetID == peeringSubnetId {
+		// 		xmlItfToRm, err := generateXMLVirtualInterface(newPeeringAdapter.String())
+		// 		err = i.HotDetachDevice()
+		// 		break
+		// 	}
+		// }
+
+		// ----
+		// if !alreadyExists {
+		// 	newPeeringAdapter, err := NewAdapter(peeringSubnetId, fmt.Sprintf("Peering %s", peeringSubnetId), fmt.Sprintf("Peering %s", peeringSubnetId), "", []string{}, false, true)
+		// 	xmlItfToAdd, err := generateXMLVirtualInterface(newPeeringAdapter.String())
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	itfToAdd, err := XmlMarshal(xmlItfToAdd)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	err = i.HotAttachDevice(itfToAdd)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	xml, err := i.get(true)
+		// 	domain := virtxml.Domain{}
+		// 	XmlUnmarshal(xml, &domain)
+		// 	var slotNumber uint
+		// 	for _, itf := range domain.Devices.Interfaces {
+		// 		if itf.Source.Bridge.Bridge == newPeeringAdapter.SubnetID {
+		// 			slotNumber = *itf.Address.PCI.Slot
+		// 		}
+		// 	}
+		// 	i.AddAdapter(slotNumber, newPeeringAdapter)
+		// }
+	}
+	return nil
+}
+
+func (k *Kawaii) peeringDiff(peerings []KawaiiVpcPeering) (peeringsToAdd, peeringsToDel []string) {
+	// Peering Diff check
+	for _, currentPeer := range k.VpcPeerings {
+		found := false
+		for _, newVpcPeering := range peerings {
+			if newVpcPeering.SubnetID == currentPeer.SubnetID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			peeringsToDel = append(peeringsToDel, currentPeer.SubnetID)
+		}
+	}
+	for _, newVpcPeering := range peerings {
+		found := false
+		for _, currentPeer := range k.VpcPeerings {
+			if newVpcPeering.SubnetID == currentPeer.SubnetID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			peeringsToAdd = append(peeringsToAdd, newVpcPeering.SubnetID)
+		}
+	}
+	return peeringsToAdd, peeringsToDel
 }

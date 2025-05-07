@@ -425,26 +425,42 @@ func newVirtualInterfaces(interfaces map[string]string) []virtxml.DomainInterfac
 			continue
 		}
 
-		a, err := FindAdapterByID(adapterId)
+		iface, err := generateXMLVirtualInterface(adapterId)
 		if err != nil {
 			continue
 		}
+		// ifaces = append(ifaces, iface)
+		// s, err := a.Subnet()
+		// if err != nil {
+		// 	continue
+		// }
 
-		s, err := a.Subnet()
-		if err != nil {
-			continue
-		}
+		// v, err := s.VNet()
+		// if err != nil {
+		// 	continue
+		// }
 
-		v, err := s.VNet()
-		if err != nil {
-			continue
-		}
-
-		iface := virtInterface(a.MAC, v.Interface)
+		// iface := virtInterface(a.MAC, v.Interface)
 		ifaces = append(ifaces, iface)
 	}
 
 	return ifaces
+}
+
+func generateXMLVirtualInterface(adapterId string) (virtxml.DomainInterface, error) {
+	a, err := FindAdapterByID(adapterId)
+	if err != nil {
+		return virtxml.DomainInterface{}, err
+	}
+	s, err := a.Subnet()
+	if err != nil {
+		return virtxml.DomainInterface{}, err
+	}
+	v, err := s.VNet()
+	if err != nil {
+		return virtxml.DomainInterface{}, err
+	}
+	return virtInterface(a.MAC, v.Interface), nil
 }
 
 func newVirtualDisks(disks map[string]string, cloudInitVolumeId string) []virtxml.DomainDisk {
