@@ -1,5 +1,10 @@
 ## unreleased (yyyy-mm-dd)
 
+## 0.63.1 (2025-05-08)
+* **NEW**: updated logo in email notifications.
+* **NEW**: updated dependencies.
+* **BUG**: fix APT packages repo URL in Linux cloud-init.
+
 ## 0.63.0 (2025-05-02)
 * **NEW**: **kahuna**: switched to MongoDB driver v2.
 * **NEW**: **kawaii**: When creating a Kawaii Public and Private VIP, those are now coupled under a same Virtual Router ID
