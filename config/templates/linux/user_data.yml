@@ -47,7 +47,7 @@ runcmd:
   - gpg -k
   - gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/kowabunga.gpg --keyserver keyserver.ubuntu.com --recv-keys 5277E8C721237125
   - chmod 644 /usr/share/keyrings/kowabunga.gpg
-  - echo "deb [arch=amd64 signed-by=/usr/share/keyrings/kowabunga.gpg] http://packages.kowabunga.cloud/ ubuntu main" > /etc/apt/sources.list.d/kowabunga.repo.list
+  - echo "deb [arch=amd64 signed-by=/usr/share/keyrings/kowabunga.gpg] http://packages.kowabunga.cloud/ubuntu noble main" > /etc/apt/sources.list.d/kowabunga.repo.list
   - apt-get update
 {{ end }}
 {{ if eq .Profile "kawaii" }}
