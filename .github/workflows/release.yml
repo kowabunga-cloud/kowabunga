@@ -25,9 +25,12 @@ jobs:
         run: make all
       - name: Build Debian package
         run: make deb DIST=noble
+      - name: Generate release ${{ github.ref_name }} changelog
+        run: awk '/^## ${{ github.ref_name }}/' RS= CHANGELOG.md > CHANGELOG-${{ github.ref_name }}.md
       - name: Release Debian Package
         uses: softprops/action-gh-release@v2
         with:
+          body_path: CHANGELOG-${{ github.ref_name }}.md
           files: |
             ../*.deb
 
