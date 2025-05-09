@@ -22,7 +22,7 @@ This is **Kowabunga**, a complete infrastructure automation suite to orchestrate
 [![time tracker](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga.svg)](https://wakatime.com/badge/github/kowabunga-cloud/kowabunga)
 ![Code lines](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=code)
 ![Comments](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=comments)
-![COCOMO](https://sloc.xyz/github/kowabunga-cloud/kobra/?category=cocomo&avg-wage=100000)
+![COCOMO](https://sloc.xyz/github/kowabunga-cloud/kowabunga/?category=cocomo&avg-wage=100000)
 
 This repository features the server-side bits of Kowabunga, including:
 
