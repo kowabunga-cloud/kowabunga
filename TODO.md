@@ -89,7 +89,7 @@ KVM HCI Nodes - Kador
   - Add GitHub sponsoring section
 - FOSDEM 2026 Talk ?
 - LF or CNCF Integration
-
+- [Mozilla Builders[(https://github.com/mozilla/builders) Sponsoring
 
 
 
