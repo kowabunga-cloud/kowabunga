@@ -46,19 +46,19 @@ func sendEmail(to, subject string, body hermes.Email) error {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
 
-	// Generate an HTML email with the provided contents (for modern clients)
-	html, err := h.GenerateHTML(body)
-	if err != nil {
-		return err
-	}
-	m.SetBody("text/html", html)
-
 	// Generate the plaintext version of the e-mail (for clients that do not support xHTML)
 	text, err := h.GeneratePlainText(body)
 	if err != nil {
 		return err
 	}
-	m.AddAlternative("text/plain", text)
+	m.SetBody("text/plain", text)
+
+	// Generate an HTML email with the provided contents (for modern clients)
+	html, err := h.GenerateHTML(body)
+	if err != nil {
+		return err
+	}
+	m.AddAlternative("text/html", html)
 
 	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.Username, smtp.Password)
 	err = d.DialAndSend(m)
