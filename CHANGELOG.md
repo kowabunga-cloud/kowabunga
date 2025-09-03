@@ -1,6 +1,7 @@
 ## unreleased (yyyy-mm-dd)
 
 ## 0.63.2 (2025-09-03)
+* **NEW**: Add support for ARM64 architecture.
 * **NEW**: Update build dependencies.
 * **NEW**: updated gosec to v2.22.8.
 * **NEW**: updated golangci-lint to v2.4.0.
