@@ -9,7 +9,7 @@ require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/cavaliergopher/grab/v3 v3.0.1
-	github.com/ceph/go-ceph v0.35.0
+	github.com/ceph/go-ceph v0.33.0
 	github.com/coocood/freecache v1.2.4
 	github.com/coreos/go-systemd/v22 v22.6.0
 	github.com/digitalocean/go-libvirt v0.0.0-20250902164301-14aca49c5ed4
