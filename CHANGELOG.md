@@ -1,5 +1,11 @@
 ## unreleased (yyyy-mm-dd)
 
+## 0.63.2 (2025-09-03)
+* **NEW**: Update build dependencies.
+* **NEW**: updated gosec to v2.22.8.
+* **NEW**: updated golangci-lint to v2.4.0.
+* **BUG**: correct SMTP email format (html first, plain text as fallback)
+
 ## 0.63.1 (2025-05-08)
 * **NEW**: updated logo in email notifications.
 * **NEW**: updated dependencies.
