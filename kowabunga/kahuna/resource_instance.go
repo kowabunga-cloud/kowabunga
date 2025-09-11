@@ -8,7 +8,6 @@ package kahuna
 
 import (
 	"fmt"
-	"net"
 	"reflect"
 	"sort"
 
@@ -92,12 +91,15 @@ func (i *Instance) NewInterfaceMap(adapters []string) (map[string]string, error)
 			return interfaces, err
 		}
 
-		ip, _, err := net.ParseCIDR(s.CIDR)
+		v, err := s.VNet()
 		if err != nil {
 			return interfaces, err
 		}
 
-		if !ip.IsPrivate() {
+		// IMPORTANT: we check for VNet 'private' status instead of subnet IPs
+		// as 'public' networks (i.e. exposed) might very well be corporate private ones,
+		// just not the Kowabunga service ones.
+		if !v.Private {
 			if publicAdapter == nil {
 				publicAdapter = a
 				continue
