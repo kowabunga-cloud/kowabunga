@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 PKG_NAME=github.com/kowabunga-cloud/kowabunga/kowabunga/kahuna
-VERSION=0.63.2
+VERSION=0.63.3
 DIST=noble
 CODENAME=NoFuture
 

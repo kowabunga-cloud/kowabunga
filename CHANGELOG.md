@@ -1,5 +1,8 @@
 ## unreleased (yyyy-mm-dd)
 
+## 0.63.3 (2025-09-11)
+* **BUG**: **kompute**: fix some private IP assignment issue when 'public' (exposed) network contains private subnets.
+
 ## 0.63.2 (2025-09-03)
 * **NEW**: Add support for ARM64 architecture.
 * **NEW**: Update build dependencies.
