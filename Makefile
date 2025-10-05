@@ -54,14 +54,6 @@ else
   OUT = ">/dev/null"
 endif
 
-UNAME := $(shell uname -s)
-ifeq ($(UNAME),Darwin)
-.EXPORT_ALL_VARIABLES:
-OSX_CEPH_DIR = $(shell ls -d /opt/homebrew/Cellar/ceph-client/* | tail -n 1)
-CGO_CPPFLAGS = "-I$(OSX_CEPH_DIR)/include"
-CGO_LDFLAGS = "-L$(OSX_CEPH_DIR)/lib"
-endif
-
 # This is our default target
 # it does not build/run the tests
 .PHONY: all

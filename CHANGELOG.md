@@ -1,4 +1,5 @@
 ## unreleased (yyyy-mm-dd)
+* **BREAKING CHANGE**: deprecate complete OSX build (failed Ceph libraries dependency).
 
 ## 0.63.3 (2025-09-11)
 * **BUG**: **kompute**: fix some private IP assignment issue when 'public' (exposed) network contains private subnets.
