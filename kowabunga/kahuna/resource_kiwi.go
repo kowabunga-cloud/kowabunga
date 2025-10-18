@@ -195,6 +195,30 @@ func (k *Kiwi) Reload() error {
 		args.Domains = append(args.Domains, domain)
 	}
 
+	region, err := k.Region()
+	if err != nil {
+		return err
+	}
+
+	recordIds := region.DnsRecords()
+	for _, pid := range recordIds {
+		record, err := region.FindDnsRecordByID(pid)
+		if err != nil {
+			return err
+		}
+
+		domain := kiwi.KiwiReloadArgsDomain{
+			Name: record.Domain,
+		}
+
+		r := kiwi.KiwiReloadArgsRecord{
+			Type:      "A",
+			Addresses: record.Addresses,
+		}
+		domain.Records = append(domain.Records, r)
+		args.Domains = append(args.Domains, domain)
+	}
+
 	var reply kiwi.KiwiReloadReply
 
 	return k.RPC("Reload", args, &reply)
