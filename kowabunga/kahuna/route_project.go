@@ -72,7 +72,7 @@ func (s *ProjectService) CreateProjectDnsRecord(ctx context.Context, projectId s
 	}
 
 	// create DNS record
-	r, err := NewDnsRecord(prj.String(), prj.Domain, dnsRecord.Name, dnsRecord.Description, dnsRecord.Addresses)
+	r, err := NewDnsRecord(prj.String(), "", prj.Domain, dnsRecord.Name, dnsRecord.Description, dnsRecord.Addresses)
 	if err != nil {
 		return HttpServerError(err)
 	}

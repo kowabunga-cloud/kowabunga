@@ -299,6 +299,37 @@ func (s *RegionService) CreateStoragePool(ctx context.Context, regionId string, 
 	return HttpCreated(payload)
 }
 
+func (s *RegionService) CreateRegionDnsRecord(ctx context.Context, regionId string, record sdk.DnsRecord) (sdk.ImplResponse, error) {
+	LogHttpRequest(RA("regionId", regionId), RA("record", record))
+
+	// ensure region exists
+	r, err := FindRegionByID(regionId)
+	if err != nil {
+		return HttpNotFound(err)
+	}
+
+	// check for params
+	if record.Name == "" || record.Domain == "" || len(record.Addresses) == 0 {
+		return HttpBadParams(err)
+	}
+
+	// ensure DNS record does not already exists
+	_, err = FindDnsRecordByDomainAndName(record.Domain, record.Name)
+	if err == nil {
+		return HttpConflict(err)
+	}
+
+	// create DNS record
+	rec, err := NewDnsRecord("", r.String(), record.Domain, record.Name, record.Description, record.Addresses)
+	if err != nil {
+		return HttpServerError(err)
+	}
+
+	payload := rec.Model()
+	LogHttpResponse(payload)
+	return HttpCreated(payload)
+}
+
 func (s *RegionService) ListRegionKiwis(ctx context.Context, regionId string) (sdk.ImplResponse, error) {
 	r, err := FindRegionByID(regionId)
 	if err != nil {
@@ -381,4 +412,14 @@ func (s *RegionService) SetRegionDefaultStoragePool(ctx context.Context, regionI
 	}
 
 	return HttpOK(nil)
+}
+
+func (s *RegionService) ListRegionDnsRecords(ctx context.Context, regionId string) (sdk.ImplResponse, error) {
+	r, err := FindRegionByID(regionId)
+	if err != nil {
+		return HttpNotFound(err)
+	}
+
+	payload := r.DnsRecords()
+	return HttpOK(payload)
 }

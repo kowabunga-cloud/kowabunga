@@ -22,6 +22,7 @@ const (
 	ErrRegionNoSuchVNet        = "no such virtual network in region"
 	ErrRegionNoSuchStoragePool = "no such storage pool in region"
 	ErrRegionNoSuchNfs         = "no such NFS storage in region"
+	ErrRegionNoSuchDnsRecord   = "no such DNS record in region"
 
 	RegionMaxScore = 999999
 )
@@ -42,6 +43,7 @@ type Region struct {
 	VNetIDs        []string `bson:"vnet_ids"`
 	StoragePoolIDs []string `bson:"storage_pool_ids"`
 	NfsIDs         []string `bson:"nfs_ids"`
+	RecordIDs      []string `bson:"record_ids"`
 }
 
 type RegionDefaults struct {
@@ -86,6 +88,7 @@ func NewRegion(name, desc string) (*Region, error) {
 		VNetIDs:        []string{},
 		StoragePoolIDs: []string{},
 		NfsIDs:         []string{},
+		RecordIDs:      []string{},
 	}
 
 	_, err := GetDB().Insert(MongoCollectionRegionName, r)
@@ -162,7 +165,7 @@ func (r *Region) migrateSchemaV2() error {
 }
 
 func (r *Region) HasChildren() bool {
-	return HasChildRefs(r.ZoneIDs, r.KiwiIDs, r.VNetIDs, r.StoragePoolIDs, r.NfsIDs)
+	return HasChildRefs(r.ZoneIDs, r.KiwiIDs, r.VNetIDs, r.StoragePoolIDs, r.NfsIDs, r.RecordIDs)
 }
 
 func (r *Region) FindZones() ([]Zone, error) {
@@ -183,6 +186,10 @@ func (r *Region) FindStoragePools() ([]StoragePool, error) {
 
 func (r *Region) FindNfs() ([]NFS, error) {
 	return FindNfsByRegion(r.String())
+}
+
+func (r *Region) FindDnsRecords() ([]DnsRecord, error) {
+	return FindDnsRecordsByRegion(r.String())
 }
 
 func (r *Region) AverageVirtualResources() *RegionVirtualResources {
@@ -432,6 +439,28 @@ func (r *Region) SetDefaultNfs(id string, force bool) error {
 	r.Save()
 
 	return nil
+}
+
+// DNS Records
+
+func (r *Region) DnsRecords() []string {
+	return r.RecordIDs
+}
+
+func (r *Region) FindDnsRecordByID(id string) (*DnsRecord, error) {
+	return FindChildByID[DnsRecord](&r.RecordIDs, id, MongoCollectionDnsRecordName, ErrRegionNoSuchDnsRecord)
+}
+
+func (r *Region) AddDnsRecord(id string) {
+	klog.Debugf("Adding DNS Record %s to region %s", id, r.String())
+	AddChildRef(&r.RecordIDs, id)
+	r.Save()
+}
+
+func (r *Region) RemoveDnsRecord(id string) {
+	klog.Debugf("Removing DNS Record %s from region %s", id, r.String())
+	RemoveChildRef(&r.RecordIDs, id)
+	r.Save()
 }
 
 // Cost

@@ -25,6 +25,7 @@ type DnsRecord struct {
 
 	// parents
 	ProjectID string `bson:"project_id"`
+	RegionID  string `bson:"region_id"`
 
 	// properties
 	Domain    string   `bson:"domain"`
@@ -52,8 +53,7 @@ func DnsRecordMigrateSchema() error {
 	return nil
 }
 
-func NewDnsRecord(projectId, domain, name, desc string, addresses []string) (*DnsRecord, error) {
-
+func NewDnsRecord(projectId, regionId, domain, name, desc string, addresses []string) (*DnsRecord, error) {
 	// ensure we have a rightful domain, if any
 	if domain != "" && !VerifyDomain(domain) {
 		err := fmt.Errorf("invalid domain name: %s", domain)
@@ -68,16 +68,35 @@ func NewDnsRecord(projectId, domain, name, desc string, addresses []string) (*Dn
 		}
 	}
 
+	// ensure we have either a parent project or a region specified, not both
+	if projectId != "" && regionId != "" {
+		err := fmt.Errorf("can't have both a project and region parent specified")
+		return nil, err
+	}
+
 	r := DnsRecord{
 		Resource:  NewResource(name, desc, MongoCollectionDnsRecordSchemaVersion),
 		ProjectID: projectId,
+		RegionID:  regionId,
 		Domain:    domain,
 		Addresses: addresses,
 	}
 
-	prj, err := r.Project()
-	if err != nil {
-		return nil, err
+	var err error
+	var prj *Project
+	if projectId != "" {
+		prj, err = r.Project()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var region *Region
+	if regionId != "" {
+		region, err = r.Region()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = r.CreateDnsRecord()
@@ -93,8 +112,15 @@ func NewDnsRecord(projectId, domain, name, desc string, addresses []string) (*Dn
 
 	klog.Infof("Created new DNS record %s (%s.%s)", r.String(), r.Name, r.Domain)
 
-	// add volume to project
-	prj.AddDnsRecord(r.String())
+	// add record to project
+	if prj != nil {
+		prj.AddDnsRecord(r.String())
+	}
+
+	// add record to region
+	if region != nil {
+		region.AddDnsRecord(r.String())
+	}
 
 	return &r, nil
 }
@@ -103,8 +129,12 @@ func FindDnsRecords() []DnsRecord {
 	return FindResources[DnsRecord](MongoCollectionDnsRecordName)
 }
 
-func FindRecordsByProject(projectId string) ([]DnsRecord, error) {
+func FindDnsRecordsByProject(projectId string) ([]DnsRecord, error) {
 	return FindResourcesByKey[DnsRecord](MongoCollectionDnsRecordName, "project_id", projectId)
+}
+
+func FindDnsRecordsByRegion(regionId string) ([]DnsRecord, error) {
+	return FindResourcesByKey[DnsRecord](MongoCollectionDnsRecordName, "region_id", regionId)
 }
 
 func FindDnsRecordByID(id string) (*DnsRecord, error) {
@@ -146,6 +176,10 @@ func (r *DnsRecord) migrateSchemaV2() error {
 
 func (r *DnsRecord) Project() (*Project, error) {
 	return FindProjectByID(r.ProjectID)
+}
+
+func (r *DnsRecord) Region() (*Region, error) {
+	return FindRegionByID(r.RegionID)
 }
 
 func (r *DnsRecord) CreateDnsRecord() error {
@@ -208,11 +242,24 @@ func (r *DnsRecord) Delete() error {
 	}
 
 	// remove record's reference from parents
-	prj, err := r.Project()
-	if err != nil {
-		return err
+	prj, errP := r.Project()
+	if errP == nil {
+		prj.RemoveDnsRecord(r.String())
 	}
-	prj.RemoveDnsRecord(r.String())
+
+	region, errR := r.Region()
+	if errR == nil {
+		region.RemoveDnsRecord(r.String())
+	}
+
+	if errP != nil && errR != nil {
+		if errP != nil {
+			return errP
+		}
+		if errR != nil {
+			return errR
+		}
+	}
 
 	return GetDB().Delete(MongoCollectionDnsRecordName, r.ID)
 }
