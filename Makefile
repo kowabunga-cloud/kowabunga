@@ -29,13 +29,13 @@ YARN = $(NODE_DIR)/.bin/yarn
 OPENAPI_GENERATOR = $(NODE_DIR)/.bin/openapi-generator-cli
 
 GOLINT = $(BINDIR)/golangci-lint
-GOLINT_VERSION = v2.4.0
+GOLINT_VERSION = v2.5.0
 
 GOVULNCHECK = $(BINDIR)/govulncheck
 GOVULNCHECK_VERSION = v1.1.4
 
 GOSEC = $(BINDIR)/gosec
-GOSEC_VERSION = v2.22.8
+GOSEC_VERSION = v2.22.10
 
 PKGS = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME))
 PKGS_SHORT = $(shell go list ./... | grep -v /$(SDK_PACKAGE_NAME) | sed 's%github.com/kowabunga-cloud/kowabunga/%%')
