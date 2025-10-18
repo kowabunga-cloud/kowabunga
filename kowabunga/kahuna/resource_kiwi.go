@@ -168,6 +168,38 @@ func (k *Kiwi) Model() sdk.Kiwi {
 	}
 }
 
+func (k *Kiwi) Reload() error {
+	args := kiwi.KiwiReloadArgs{}
+
+	projects := FindProjects()
+	for _, p := range projects {
+
+		domain := kiwi.KiwiReloadArgsDomain{
+			Name: p.Domain,
+		}
+
+		recordIds := p.DnsRecords()
+		for _, pid := range recordIds {
+			record, err := p.FindDnsRecordByID(pid)
+			if err != nil {
+				return err
+			}
+
+			r := kiwi.KiwiReloadArgsRecord{
+				Type:      "A",
+				Addresses: record.Addresses,
+			}
+			domain.Records = append(domain.Records, r)
+		}
+
+		args.Domains = append(args.Domains, domain)
+	}
+
+	var reply kiwi.KiwiReloadReply
+
+	return k.RPC("Reload", args, &reply)
+}
+
 func (k *Kiwi) CreateDnsZone(domain string) error {
 	args := kiwi.KiwiCreateDnsZoneArgs{
 		Domain: domain,

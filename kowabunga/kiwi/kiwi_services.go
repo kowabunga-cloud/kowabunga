@@ -8,6 +8,7 @@ package kiwi
 
 import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 )
 
 type Kiwi struct {
@@ -29,6 +30,35 @@ func (k *Kiwi) Capabilities(args *agents.CapabilitiesArgs, reply *agents.Capabil
 		Version: KiwiVersion,
 		Methods: k.agent.RpcServer().GetServices(),
 	}
+	return nil
+}
+
+/*
+ * RPC Reload()
+ */
+
+type KiwiReloadArgs struct {
+	Domains []KiwiReloadArgsDomain
+}
+
+type KiwiReloadArgsDomain struct {
+	Name    string
+	Records []KiwiReloadArgsRecord
+}
+
+type KiwiReloadArgsRecord struct {
+	Type      string
+	Addresses []string
+}
+
+type KiwiReloadReply struct{}
+
+func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
+	klog.Infof("Reloading Kiwi agent configuration ...")
+
+	klog.Debugf("Kiwi Config Args: %+v", args)
+
+	*reply = KiwiReloadReply{}
 	return nil
 }
 

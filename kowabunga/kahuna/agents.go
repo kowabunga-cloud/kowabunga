@@ -144,6 +144,16 @@ func RegisterAgent(agentType, agentId string, client *wsrpc.WsRpcClient) error {
 	go ag.WatchKeepalive()
 
 	switch ag.Type {
+	case common.KowabungaKiwiAgent:
+		kiwis := FindKiwis()
+		for _, k := range kiwis {
+			if slices.Contains(k.AgentIDs, agentId) {
+				err := k.Reload()
+				if err != nil {
+					return err
+				}
+			}
+		}
 	case common.KowabungaKaktusAgent:
 		kaktuses := FindKaktuses()
 		for _, k := range kaktuses {
