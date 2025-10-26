@@ -5,7 +5,7 @@
  *
  * Kvm Orchestrator With A BUNch of Goods Added
  *
- * API version: 0.53.1
+ * API version: 0.53.2
  * Contact: maintainers@kowabunga.cloud
  */
 

@@ -5,7 +5,7 @@
  *
  * Kvm Orchestrator With A BUNch of Goods Added
  *
- * API version: 0.53.1
+ * API version: 0.53.2
  * Contact: maintainers@kowabunga.cloud
  */
 
@@ -25,12 +25,16 @@ type Region struct {
 
 	// The region description.
 	Description string `json:"description,omitempty"`
+
+	// Region domain name (e.g. myregion.kowabunga.acme.com).
+	Domain string `json:"domain"`
 }
 
 // AssertRegionRequired checks if the required fields are not zero-ed
 func AssertRegionRequired(obj Region) error {
 	elements := map[string]interface{}{
 		"name": obj.Name,
+		"domain": obj.Domain,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {

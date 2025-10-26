@@ -10,7 +10,7 @@ CODENAME=NoFuture
 SRC_DIR = kowabunga
 SDK_GENERATOR = go-server
 SDK_PACKAGE_NAME = sdk
-SDK_VERSION = "tags/v0.53.1"
+SDK_VERSION = "tags/v0.53.2"
 #SDK_VERSION = "heads/main"
 SDK_OPENAPI_SPEC = "https://raw.githubusercontent.com/kowabunga-cloud/openapi/refs/$(SDK_VERSION)/openapi.yaml"
 
