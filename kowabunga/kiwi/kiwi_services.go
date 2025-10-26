@@ -47,6 +47,7 @@ type KiwiReloadArgsDomain struct {
 }
 
 type KiwiReloadArgsRecord struct {
+	Name      string
 	Type      string
 	Addresses []string
 }

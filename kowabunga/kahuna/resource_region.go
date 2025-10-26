@@ -34,6 +34,7 @@ type Region struct {
 	// parents
 
 	// properties
+	Domain           string                 `bson:"domain"`
 	Defaults         RegionDefaults         `bson:"defaults"`
 	VirtualResources RegionVirtualResources `bson:"virtual_resources"`
 
@@ -80,9 +81,10 @@ func RegionMigrateSchema() error {
 	return nil
 }
 
-func NewRegion(name, desc string) (*Region, error) {
+func NewRegion(name, desc, domain string) (*Region, error) {
 	r := Region{
 		Resource:       NewResource(name, desc, MongoCollectionRegionSchemaVersion),
+		Domain:         domain,
 		ZoneIDs:        []string{},
 		KiwiIDs:        []string{},
 		VNetIDs:        []string{},
@@ -196,8 +198,9 @@ func (r *Region) AverageVirtualResources() *RegionVirtualResources {
 	return &r.VirtualResources
 }
 
-func (r *Region) Update(name, desc string) {
+func (r *Region) Update(name, desc, domain string) {
 	r.UpdateResourceDefaults(name, desc)
+	SetFieldStr(&r.Domain, domain)
 	r.Save()
 }
 
@@ -224,6 +227,7 @@ func (r *Region) Model() sdk.Region {
 		Id:          r.String(),
 		Name:        r.Name,
 		Description: r.Description,
+		Domain:      r.Domain,
 	}
 }
 

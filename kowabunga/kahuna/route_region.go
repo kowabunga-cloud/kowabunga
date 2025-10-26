@@ -22,7 +22,7 @@ func (s *RegionService) CreateRegion(ctx context.Context, region sdk.Region) (sd
 	LogHttpRequest(RA("region", region))
 
 	// check for params
-	if region.Name == "" {
+	if region.Name == "" || region.Domain == "" {
 		return HttpBadParams(nil)
 	}
 
@@ -33,7 +33,7 @@ func (s *RegionService) CreateRegion(ctx context.Context, region sdk.Region) (sd
 	}
 
 	// create region
-	r, err := NewRegion(region.Name, region.Description)
+	r, err := NewRegion(region.Name, region.Description, region.Domain)
 	if err != nil {
 		return HttpServerError(err)
 	}
@@ -130,7 +130,7 @@ func (s *RegionService) UpdateRegion(ctx context.Context, regionId string, regio
 	LogHttpRequest(RA("regionId", regionId), RA("region", region))
 
 	// check for params
-	if region.Name == "" && region.Description == "" {
+	if region.Name == "" && region.Description == "" && region.Domain == "" {
 		return HttpBadParams(nil)
 	}
 
@@ -141,7 +141,7 @@ func (s *RegionService) UpdateRegion(ctx context.Context, regionId string, regio
 	}
 
 	// update region
-	r.Update(region.Name, region.Description)
+	r.Update(region.Name, region.Description, region.Domain)
 
 	payload := r.Model()
 	LogHttpResponse(payload)
@@ -309,18 +309,18 @@ func (s *RegionService) CreateRegionDnsRecord(ctx context.Context, regionId stri
 	}
 
 	// check for params
-	if record.Name == "" || record.Domain == "" || len(record.Addresses) == 0 {
+	if record.Name == "" || len(record.Addresses) == 0 {
 		return HttpBadParams(err)
 	}
 
 	// ensure DNS record does not already exists
-	_, err = FindDnsRecordByDomainAndName(record.Domain, record.Name)
+	_, err = FindDnsRecordByDomainAndName(r.Domain, record.Name)
 	if err == nil {
 		return HttpConflict(err)
 	}
 
 	// create DNS record
-	rec, err := NewDnsRecord("", r.String(), record.Domain, record.Name, record.Description, record.Addresses)
+	rec, err := NewDnsRecord("", r.String(), r.Domain, record.Name, record.Description, record.Addresses)
 	if err != nil {
 		return HttpServerError(err)
 	}

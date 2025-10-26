@@ -186,6 +186,7 @@ func (k *Kiwi) Reload() error {
 			}
 
 			r := kiwi.KiwiReloadArgsRecord{
+				Name:      record.Name,
 				Type:      "A",
 				Addresses: record.Addresses,
 			}
@@ -208,10 +209,11 @@ func (k *Kiwi) Reload() error {
 		}
 
 		domain := kiwi.KiwiReloadArgsDomain{
-			Name: record.Domain,
+			Name: region.Domain,
 		}
 
 		r := kiwi.KiwiReloadArgsRecord{
+			Name:      record.Name,
 			Type:      "A",
 			Addresses: record.Addresses,
 		}
