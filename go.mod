@@ -27,7 +27,7 @@ require (
 	github.com/lima-vm/go-qcow2reader v0.6.0
 	github.com/lorenzosaino/go-sysctl v0.3.1
 	github.com/machinebox/progress v0.2.0
-	github.com/matcornic/hermes/v2 v2.1.0
+	github.com/matcornic/hermes v1.3.0
 	github.com/mdlayher/arp v0.0.0-20220512170110-6706a2966875
 	github.com/netdata/go.d.plugin v0.58.1
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
@@ -45,6 +45,7 @@ require (
 )
 
 require (
+	dario.cat/mergo v1.0.1 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
