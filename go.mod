@@ -23,8 +23,8 @@ require (
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
 	github.com/joeig/go-powerdns/v3 v3.17.0
 	github.com/kdomanski/iso9660 v0.4.0
-	github.com/klauspost/compress v1.18.0
-	github.com/lima-vm/go-qcow2reader v0.6.0
+	github.com/klauspost/compress v1.18.2
+	github.com/lima-vm/go-qcow2reader v0.7.1
 	github.com/lorenzosaino/go-sysctl v0.3.1
 	github.com/machinebox/progress v0.2.0
 	github.com/matcornic/hermes v1.3.0
@@ -41,7 +41,7 @@ require (
 	golang.org/x/crypto v0.46.0
 	gopkg.in/mail.v2 v2.3.1
 	gopkg.in/yaml.v3 v3.0.1
-	libvirt.org/go/libvirtxml v1.11006.0
+	libvirt.org/go/libvirtxml v1.11010.0
 )
 
 require (
