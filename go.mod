@@ -37,7 +37,7 @@ require (
 	github.com/tredoe/osutil v1.5.0
 	github.com/vishvananda/netlink v1.3.1
 	github.com/wagslane/go-password-validator v0.3.0
-	go.mongodb.org/mongo-driver/v2 v2.3.0
+	go.mongodb.org/mongo-driver/v2 v2.4.1
 	golang.org/x/crypto v0.46.0
 	gopkg.in/mail.v2 v2.3.1
 	gopkg.in/yaml.v3 v3.0.1
