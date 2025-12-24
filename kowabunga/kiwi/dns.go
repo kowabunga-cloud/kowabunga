@@ -8,6 +8,7 @@ package kiwi
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -34,7 +35,7 @@ type DnsServer struct {
 	Recursors []string
 
 	srv     *dns.Server
-	records map[string]string // formatted as "example.com.": "a.b.c.d"
+	records map[string]string // formatted as "example.com.": "a.b.c.d" (or "a.b.c.d,e.f.g.h")
 	m       sync.Mutex        // protects the servers
 }
 
@@ -109,14 +110,22 @@ func (s *DnsServer) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 	// Try to answer from the local zone (only A records for now)
 	if q.Qtype == dns.TypeA {
 		s.m.Lock()
-		ip, ok := s.records[q.Name]
+		value, ok := s.records[q.Name]
 		s.m.Unlock()
 		if ok {
-			rr, err := dns.NewRR(q.Name + " IN A " + ip)
-			if err != nil {
-				klog.Debugf(DnsErrorRR, err)
-			} else {
-				resp.Answer = []dns.RR{rr}
+			records := []dns.RR{}
+			ips := strings.Split(value, ",")
+			for _, ip := range ips {
+				rr, err := dns.NewRR(q.Name + " IN A " + ip)
+				if err != nil {
+					klog.Debugf(DnsErrorRR, err)
+					continue
+				}
+				records = append(records, rr)
+			}
+
+			if len(records) > 0 {
+				resp.Answer = records
 				_ = w.WriteMsg(resp)
 				return
 			}

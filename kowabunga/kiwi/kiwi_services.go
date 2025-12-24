@@ -7,6 +7,9 @@
 package kiwi
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
 )
@@ -58,6 +61,18 @@ func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
 	klog.Infof("Reloading Kiwi agent configuration ...")
 
 	klog.Debugf("Kiwi Config Args: %+v", args)
+
+	dnsRecords := map[string]string{}
+	for _, d := range args.Domains {
+		for _, r := range d.Records {
+			if r.Type == "A" {
+				key := fmt.Sprintf("%s.%s.", r.Name, d)
+				value := strings.Join(r.Addresses, ",")
+				dnsRecords[key] = value
+			}
+		}
+	}
+	k.agent.dns.Update(dnsRecords)
 
 	*reply = KiwiReloadReply{}
 	return nil
