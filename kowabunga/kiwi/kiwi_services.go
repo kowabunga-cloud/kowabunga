@@ -88,9 +88,9 @@ type KiwiCreateDnsZoneArgs struct {
 type KiwiCreateDnsZoneReply struct{}
 
 func (k *Kiwi) CreateDnsZone(args *KiwiCreateDnsZoneArgs, reply *KiwiCreateDnsZoneReply) error {
-	err := k.agent.pcs.CreateDnsZone(args.Domain)
+	// do nothing
 	*reply = KiwiCreateDnsZoneReply{}
-	return err
+	return nil
 }
 
 /*
@@ -103,9 +103,9 @@ type KiwiDeleteDnsZoneArgs struct {
 type KiwiDeleteDnsZoneReply struct{}
 
 func (k *Kiwi) DeleteDnsZone(args *KiwiDeleteDnsZoneArgs, reply *KiwiDeleteDnsZoneReply) error {
-	err := k.agent.pcs.DeleteDnsZone(args.Domain)
+	// do nothing
 	*reply = KiwiDeleteDnsZoneReply{}
-	return err
+	return nil
 }
 
 /*
@@ -120,11 +120,9 @@ type KiwiCreateDnsRecordArgs struct {
 type KiwiCreateDnsRecordReply struct{}
 
 func (k *Kiwi) CreateDnsRecord(args *KiwiCreateDnsRecordArgs, reply *KiwiCreateDnsRecordReply) error {
-	err := k.agent.pcs.CreateDnsRecord(args.Domain, args.Entry, args.Addresses)
-
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	value := strings.Join(args.Addresses, ",")
-	err = k.agent.dns.AddRecord(key, value)
+	err := k.agent.dns.AddRecord(key, value)
 
 	*reply = KiwiCreateDnsRecordReply{}
 
@@ -143,11 +141,9 @@ type KiwiUpdateDnsRecordArgs struct {
 type KiwiUpdateDnsRecordReply struct{}
 
 func (k *Kiwi) UpdateDnsRecord(args *KiwiUpdateDnsRecordArgs, reply *KiwiUpdateDnsRecordReply) error {
-	err := k.agent.pcs.UpdateDnsRecord(args.Domain, args.Entry, args.Addresses)
-
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	value := strings.Join(args.Addresses, ",")
-	err = k.agent.dns.UpdateRecord(key, value)
+	err := k.agent.dns.UpdateRecord(key, value)
 
 	*reply = KiwiUpdateDnsRecordReply{}
 	return err
@@ -164,11 +160,9 @@ type KiwiDeleteDnsRecordArgs struct {
 type KiwiDeleteDnsRecordReply struct{}
 
 func (k *Kiwi) DeleteDnsRecord(args *KiwiDeleteDnsRecordArgs, reply *KiwiDeleteDnsRecordReply) error {
-	err := k.agent.pcs.DeleteDnsRecord(args.Domain, args.Entry)
-
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	k.agent.dns.DeleteRecord(key)
 
 	*reply = KiwiDeleteDnsRecordReply{}
-	return err
+	return nil
 }
