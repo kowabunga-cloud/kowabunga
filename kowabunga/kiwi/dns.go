@@ -19,6 +19,11 @@ const (
 	DnsDefaultPort              = 53
 	DnsDefaultRecursorPrimary   = "9.9.9.9"
 	DnsDefaultRecursorSecondary = "149.112.112.112"
+
+	DnsInfoServerStart  = "[dns] starting server on udp:%d"
+	DnsErrorServerStart = "[dns] failed to start DNS server: %v"
+	DnsErrorRR          = "[dns] failed to build RR: %v"
+	DnsErrorForward     = "[dns] forwarding error: %v"
 )
 
 // DnsServer represents an instance of a server, which serves DNS requests at a particular address (host and port).
@@ -75,11 +80,11 @@ func (s *DnsServer) Start(port int) error {
 	go func() {
 		err := s.srv.ListenAndServe()
 		if err != nil {
-			klog.Errorf("Failed to start DNS server: %v", err)
+			klog.Errorf(DnsErrorServerStart, err)
 		}
 	}()
 
-	klog.Infof("Starting DNS server on udp:%d", s.Port)
+	klog.Infof(DnsInfoServerStart, s.Port)
 	return nil
 }
 
@@ -109,7 +114,7 @@ func (s *DnsServer) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		if ok {
 			rr, err := dns.NewRR(q.Name + " IN A " + ip)
 			if err != nil {
-				klog.Debugf("[dns] Failed to build RR: %v", err)
+				klog.Debugf(DnsErrorRR, err)
 			} else {
 				resp.Answer = []dns.RR{rr}
 				_ = w.WriteMsg(resp)
@@ -137,7 +142,7 @@ func (s *DnsServer) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 
 	// If all forwarding fail, reply with SERVFAIL so the client knows something went wrong.
 	if errRec != nil {
-		klog.Errorf("[dns] Forwarding error: %v", errRec)
+		klog.Errorf(DnsErrorForward, errRec)
 		resp.Rcode = dns.RcodeServerFailure
 		_ = w.WriteMsg(resp)
 		return
