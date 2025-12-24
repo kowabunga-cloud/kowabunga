@@ -21,7 +21,6 @@ const (
 
 type KiwiAgent struct {
 	*agents.KowabungaAgent
-	pcs *PowerDnsConnectionSettings
 	dns *DnsServer
 }
 
@@ -35,17 +34,9 @@ func (k *KiwiAgent) Shutdown() {
 func NewKiwiAgent(cfg *KiwiAgentConfig) (*KiwiAgent, error) {
 	agent := &KiwiAgent{
 		KowabungaAgent: agents.NewKowabungaAgent(cfg.Global.ID, common.KowabungaKiwiAgent, cfg.Global.Endpoint, cfg.Global.APIKey),
-		pcs:            nil,
 		dns:            nil,
 	}
 	agent.PostFlight = agent.Shutdown
-
-	pcs, err := NewPowerDnsConnectionSettings(cfg)
-	if err != nil {
-		klog.Error(err)
-		return agent, err
-	}
-	agent.pcs = pcs
 
 	dns, err := NewDnsServer(cfg.DNS)
 	if err != nil {

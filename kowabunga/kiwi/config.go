@@ -16,27 +16,8 @@ import (
 )
 
 type KiwiAgentConfig struct {
-	Global   agents.KowabungaAgentGlobalConfig `yaml:"global"`
-	PowerDNS KiwiAgentPowerDnsConfig           `yaml:"pdns"`
-	DNS      KiwiAgentDnsConfig                `yaml:"dns,omitempty"`
-}
-
-type KiwiAgentPowerDnsConfig struct {
-	AS        KiwiAgentPowerDnsAuthoritativeConfig `yaml:"authoritative"`
-	Recursors []KiwiAgentPowerDnsRecursorConfig    `yaml:"recursors"`
-}
-
-type KiwiAgentPowerDnsAuthoritativeConfig struct {
-	Host    string `yaml:"host"`
-	APIPort int    `yaml:"api_port"`
-	APIKey  string `yaml:"api_key"`
-}
-
-type KiwiAgentPowerDnsRecursorConfig struct {
-	Host    string `yaml:"host"`
-	Port    int    `yaml:"port"`
-	APIPort int    `yaml:"api_port"`
-	APIKey  string `yaml:"api_key"`
+	Global agents.KowabungaAgentGlobalConfig `yaml:"global"`
+	DNS    KiwiAgentDnsConfig                `yaml:"dns,omitempty"`
 }
 
 type KiwiAgentDnsConfig struct {
