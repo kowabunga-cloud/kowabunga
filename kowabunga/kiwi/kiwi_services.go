@@ -72,7 +72,7 @@ func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
 			}
 		}
 	}
-	k.agent.dns.Update(dnsRecords)
+	k.agent.dns.UpdateAllRecords(dnsRecords)
 
 	*reply = KiwiReloadReply{}
 	return nil
@@ -121,7 +121,13 @@ type KiwiCreateDnsRecordReply struct{}
 
 func (k *Kiwi) CreateDnsRecord(args *KiwiCreateDnsRecordArgs, reply *KiwiCreateDnsRecordReply) error {
 	err := k.agent.pcs.CreateDnsRecord(args.Domain, args.Entry, args.Addresses)
+
+	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
+	value := strings.Join(args.Addresses, ",")
+	err = k.agent.dns.AddRecord(key, value)
+
 	*reply = KiwiCreateDnsRecordReply{}
+
 	return err
 }
 
@@ -138,6 +144,11 @@ type KiwiUpdateDnsRecordReply struct{}
 
 func (k *Kiwi) UpdateDnsRecord(args *KiwiUpdateDnsRecordArgs, reply *KiwiUpdateDnsRecordReply) error {
 	err := k.agent.pcs.UpdateDnsRecord(args.Domain, args.Entry, args.Addresses)
+
+	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
+	value := strings.Join(args.Addresses, ",")
+	err = k.agent.dns.UpdateRecord(key, value)
+
 	*reply = KiwiUpdateDnsRecordReply{}
 	return err
 }
@@ -154,6 +165,10 @@ type KiwiDeleteDnsRecordReply struct{}
 
 func (k *Kiwi) DeleteDnsRecord(args *KiwiDeleteDnsRecordArgs, reply *KiwiDeleteDnsRecordReply) error {
 	err := k.agent.pcs.DeleteDnsRecord(args.Domain, args.Entry)
+
+	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
+	k.agent.dns.DeleteRecord(key)
+
 	*reply = KiwiDeleteDnsRecordReply{}
 	return err
 }

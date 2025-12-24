@@ -60,9 +60,41 @@ func NewDnsServer(cfg KiwiAgentDnsConfig) (*DnsServer, error) {
 	}, nil
 }
 
-func (s *DnsServer) Update(records map[string]string) {
+func (s *DnsServer) UpdateAllRecords(records map[string]string) {
 	s.m.Lock()
 	s.records = records
+	s.m.Unlock()
+}
+
+func (s *DnsServer) AddRecord(k, v string) error {
+	_, ok := s.records[k]
+	if ok {
+		return fmt.Errorf("[dns] can't add already existing record: %s", k)
+	}
+
+	s.m.Lock()
+	s.records[k] = v
+	s.m.Unlock()
+
+	return nil
+}
+
+func (s *DnsServer) UpdateRecord(k, v string) error {
+	_, ok := s.records[k]
+	if !ok {
+		return fmt.Errorf("[dns] can't update non-existing record: %s", k)
+	}
+
+	s.m.Lock()
+	s.records[k] = v
+	s.m.Unlock()
+
+	return nil
+}
+
+func (s *DnsServer) DeleteRecord(k string) {
+	s.m.Lock()
+	delete(s.records, k)
 	s.m.Unlock()
 }
 
