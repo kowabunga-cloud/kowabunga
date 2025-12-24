@@ -15,6 +15,12 @@ import (
 	"github.com/miekg/dns"
 )
 
+const (
+	DnsDefaultPort              = 53
+	DnsDefaultRecursorPrimary   = "9.9.9.9"
+	DnsDefaultRecursorSecondary = "149.112.112.112"
+)
+
 // DnsServer represents an instance of a server, which serves DNS requests at a particular address (host and port).
 // A server is capable of serving numerous zones on the same address and the listener may be stopped for
 // graceful termination (POSIX only).
@@ -27,7 +33,20 @@ type DnsServer struct {
 	m       sync.Mutex        // protects the servers
 }
 
-func NewDnsServer(port int, recursors []string) (*DnsServer, error) {
+func NewDnsServer(cfg KiwiAgentDnsConfig) (*DnsServer, error) {
+	port := cfg.Port
+	if port == 0 {
+		port = DnsDefaultPort
+	}
+
+	recursors := cfg.Recursors
+	if len(recursors) == 0 {
+		recursors = []string{
+			DnsDefaultRecursorPrimary,
+			DnsDefaultRecursorSecondary,
+		}
+	}
+
 	return &DnsServer{
 		Port:      port,
 		Recursors: recursors,
@@ -109,7 +128,7 @@ func (s *DnsServer) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 	var fwdResp *dns.Msg
 	for _, rec := range s.Recursors {
 		// Forward the exact request we received.
-		recursor := fmt.Sprintf("%s:53", rec)
+		recursor := fmt.Sprintf("%s:%d", rec, DnsDefaultPort)
 		fwdResp, _, errRec = c.Exchange(r, recursor)
 		if errRec == nil {
 			break // first recursor replied

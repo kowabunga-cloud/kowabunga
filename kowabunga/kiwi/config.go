@@ -18,6 +18,7 @@ import (
 type KiwiAgentConfig struct {
 	Global   agents.KowabungaAgentGlobalConfig `yaml:"global"`
 	PowerDNS KiwiAgentPowerDnsConfig           `yaml:"pdns"`
+	DNS      KiwiAgentDnsConfig                `yaml:"dns,omitempty"`
 }
 
 type KiwiAgentPowerDnsConfig struct {
@@ -36,6 +37,11 @@ type KiwiAgentPowerDnsRecursorConfig struct {
 	Port    int    `yaml:"port"`
 	APIPort int    `yaml:"api_port"`
 	APIKey  string `yaml:"api_key"`
+}
+
+type KiwiAgentDnsConfig struct {
+	Port      int      `yaml:"port,omitempty"`
+	Recursors []string `yaml:"recursors,omitempty"`
 }
 
 func KiwiConfigParser(f *os.File) (*KiwiAgentConfig, error) {
