@@ -65,7 +65,7 @@ func (s *DnsServer) Update(records map[string]string) {
 	s.m.Unlock()
 }
 
-func (s *DnsServer) Start(port int) error {
+func (s *DnsServer) Start() error {
 	addr := fmt.Sprintf(":%d", s.Port)
 
 	s.srv = &dns.Server{
@@ -76,7 +76,7 @@ func (s *DnsServer) Start(port int) error {
 		}),
 	}
 
-	// Run the server in its own goroutine so we can log start‑up failures cleanly.
+	// Run the server in its own goroutine so we can log start-up failures cleanly.
 	go func() {
 		err := s.srv.ListenAndServe()
 		if err != nil {

@@ -15,21 +15,28 @@ import (
 )
 
 const (
-	KiwiVersion  = "1.0"
+	KiwiVersion  = "1.1"
 	KiwiAppNmame = "kowabunga-kiwi"
 )
 
 type KiwiAgent struct {
 	*agents.KowabungaAgent
 	pcs *PowerDnsConnectionSettings
+	dns *DnsServer
 }
 
-func (k *KiwiAgent) Shutdown() {}
+func (k *KiwiAgent) Shutdown() {
+	err := k.dns.Stop()
+	if err != nil {
+		klog.Error(err)
+	}
+}
 
 func NewKiwiAgent(cfg *KiwiAgentConfig) (*KiwiAgent, error) {
 	agent := &KiwiAgent{
 		KowabungaAgent: agents.NewKowabungaAgent(cfg.Global.ID, common.KowabungaKiwiAgent, cfg.Global.Endpoint, cfg.Global.APIKey),
 		pcs:            nil,
+		dns:            nil,
 	}
 	agent.PostFlight = agent.Shutdown
 
@@ -39,6 +46,19 @@ func NewKiwiAgent(cfg *KiwiAgentConfig) (*KiwiAgent, error) {
 		return agent, err
 	}
 	agent.pcs = pcs
+
+	dns, err := NewDnsServer(cfg.DNS)
+	if err != nil {
+		klog.Error(err)
+		return agent, err
+	}
+	agent.dns = dns
+
+	err = dns.Start()
+	if err != nil {
+		klog.Error(err)
+		return agent, err
+	}
 
 	err = agent.RegisterServices(newKiwi(agent))
 	return agent, err
