@@ -15,7 +15,7 @@ import (
 	"github.com/netdata/go.d.plugin/pkg/iprange"
 	ipa "github.com/seancfoley/ipaddress-go/ipaddr"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 

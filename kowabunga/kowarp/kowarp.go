@@ -14,8 +14,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/klog"
 	"github.com/vishvananda/netlink"
 )
 

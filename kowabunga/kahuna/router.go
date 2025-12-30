@@ -16,10 +16,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/ws"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/wsrpc"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/klog"
+	"github.com/kowabunga-cloud/common/ws"
+	"github.com/kowabunga-cloud/common/wsrpc"
 
 	"github.com/gorilla/mux"
 )

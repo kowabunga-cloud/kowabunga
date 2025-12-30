@@ -11,7 +11,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 

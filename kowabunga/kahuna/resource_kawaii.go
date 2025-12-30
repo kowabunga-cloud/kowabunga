@@ -10,10 +10,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/klog"
+	"github.com/kowabunga-cloud/common/metadata"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 

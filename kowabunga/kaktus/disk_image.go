@@ -20,8 +20,8 @@ import (
 	"github.com/lima-vm/go-qcow2reader/image/raw"
 	"github.com/machinebox/progress"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

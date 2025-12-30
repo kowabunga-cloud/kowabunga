@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 	"github.com/miekg/dns"
 )
 

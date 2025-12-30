@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 // Net => broker => appropriate vrID

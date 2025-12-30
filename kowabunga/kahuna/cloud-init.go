@@ -16,8 +16,8 @@ import (
 
 	"github.com/kdomanski/iso9660"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

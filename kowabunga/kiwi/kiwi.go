@@ -9,9 +9,9 @@ package kiwi
 import (
 	"fmt"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

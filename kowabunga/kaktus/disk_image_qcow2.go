@@ -10,7 +10,7 @@ import (
 	"github.com/lima-vm/go-qcow2reader/image"
 	"github.com/lima-vm/go-qcow2reader/image/qcow2"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 func qcowEncryptionMethod(method qcow2.CryptMethod) string {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 type NfsExport struct {

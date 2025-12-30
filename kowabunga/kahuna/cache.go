@@ -18,8 +18,8 @@ import (
 	store "github.com/eko/gocache/lib/v4/store"
 	freecache_store "github.com/eko/gocache/store/freecache/v4"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

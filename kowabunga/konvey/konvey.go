@@ -7,8 +7,8 @@
 package konvey
 
 import (
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents/templates"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/agents/templates"
 )
 
 var konveyServices = map[string]*agents.ManagedService{

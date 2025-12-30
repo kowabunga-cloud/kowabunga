@@ -12,7 +12,7 @@ import (
 	"github.com/agnivade/levenshtein"
 	"github.com/huandu/xstrings"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 

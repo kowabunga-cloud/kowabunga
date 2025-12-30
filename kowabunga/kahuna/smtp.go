@@ -12,7 +12,7 @@ import (
 	"github.com/matcornic/hermes"
 	gomail "gopkg.in/mail.v2"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

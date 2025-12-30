@@ -12,8 +12,8 @@ package kawaii
 import (
 	"testing"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents/templates"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/agents/templates"
 )
 
 const (

@@ -21,7 +21,7 @@ import (
 	"github.com/digitalocean/go-libvirt/socket/dialers"
 	virtxml "libvirt.org/go/libvirtxml"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/common/klog"
 )
 
 const (

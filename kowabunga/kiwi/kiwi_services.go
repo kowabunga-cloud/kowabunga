@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/klog"
+	"github.com/kowabunga-cloud/common/proto"
 )
 
 type Kiwi struct {

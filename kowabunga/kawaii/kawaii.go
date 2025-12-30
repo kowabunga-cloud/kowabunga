@@ -7,10 +7,10 @@
 package kawaii
 
 import (
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents/templates"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/agents/templates"
+	"github.com/kowabunga-cloud/common/metadata"
 )
 
 var kawaiiServices = map[string]*agents.ManagedService{

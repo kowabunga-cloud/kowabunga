@@ -7,7 +7,7 @@
 package kawaii
 
 import (
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
+	"github.com/kowabunga-cloud/common/metadata"
 )
 
 func SetXFRMInterfaces(metadata *metadata.InstanceMetadata, args ...any) error {

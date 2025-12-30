@@ -13,10 +13,10 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/wsrpc"
+	"github.com/kowabunga-cloud/common"
+	"github.com/kowabunga-cloud/common/agents"
+	"github.com/kowabunga-cloud/common/klog"
+	"github.com/kowabunga-cloud/common/wsrpc"
 )
 
 type KowabungaAgent struct {

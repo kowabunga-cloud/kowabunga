@@ -7,7 +7,7 @@
 package kahuna
 
 import (
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/metadata"
+	"github.com/kowabunga-cloud/common/metadata"
 )
 
 const (

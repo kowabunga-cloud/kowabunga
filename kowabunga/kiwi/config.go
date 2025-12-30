@@ -12,7 +12,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
+	"github.com/kowabunga-cloud/common/agents"
 )
 
 type KiwiAgentConfig struct {
