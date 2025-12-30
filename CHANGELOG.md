@@ -1,6 +1,12 @@
 ## unreleased (yyyy-mm-dd)
+
+## 0.64.0 (2025-12-30)
 * **BREAKING CHANGE**: deprecate complete OSX build (failed Ceph libraries dependency).
 * **NEW**: implemented public API **v0.53.2**.
+* **NEW**: **kiwi**: deprecate PowerDNS support in favor of built-in DNS server.
+* **NEW**: **kiwi**: implement Reload() RPC call.
+* **NEW**: implement proper common kahuna <-> agents protocol definition package.
+* **NEW**: Update build dependencies.
 
 ## 0.63.3 (2025-09-11)
 * **BUG**: **kompute**: fix some private IP assignment issue when 'public' (exposed) network contains private subnets.
