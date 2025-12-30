@@ -24,7 +24,6 @@ require (
 	github.com/machinebox/progress v0.2.0
 	github.com/matcornic/hermes v1.3.0
 	github.com/mdlayher/arp v0.0.0-20220512170110-6706a2966875
-	github.com/miekg/dns v1.1.69
 	github.com/netdata/go.d.plugin v0.58.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/seancfoley/ipaddress-go v1.7.1

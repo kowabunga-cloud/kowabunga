@@ -27,13 +27,6 @@ Description: Kowabunga Kawaii Agent
  Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
  This is Kawaii agent, meant to provide as-a-service Internet gateway capabilities.
 
-Package: kowabunga-kiwi-agent
-Architecture: any
-Depends: ${misc:Depends}
-Description: Kowabunga Networking Agent
- Kowabunga stands for 'Kvm Orchestrator With A BUNch of Goods Added'
- This is Kiwi agent, meant to control network gateway services.
-
 Package: kowabunga-konvey-agent
 Architecture: any
 Depends: ${misc:Depends}

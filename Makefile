@@ -125,13 +125,6 @@ kawaii: ; $(info $(M) building Kawaii agent…) @
 		-ldflags='$(DEBUG)' \
 		-o $(BINDIR) ./cmd/kawaii
 
-.PHONY: kiwi
-kiwi: ; $(info $(M) building Kiwi agent…) @
-	$Q go build \
-		-gcflags="kowabunga/...=-e" \
-		-ldflags='$(DEBUG)' \
-		-o $(BINDIR) ./cmd/kiwi
-
 .PHONY: konvey
 konvey: ; $(info $(M) building Konvey agent…) @
 	$Q go build \
@@ -159,7 +152,7 @@ plugin-ceph: plugins ; $(info $(M) building Kaktus Ceph plugin…) @
 		-o $(PLUGINS_DIR) $(PLUGINS_KAKTUS_PKG_DIR)/ceph
 
 .PHONY: build
-build: kahuna kaktus kawaii kiwi konvey plugin-ceph
+build: kahuna kaktus kawaii konvey plugin-ceph
 
 .PHONY: tests
 tests: ; $(info $(M) testing Kowabunga suite…) @
