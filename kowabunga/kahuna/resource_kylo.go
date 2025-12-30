@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kaktus"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -90,9 +90,9 @@ func (k *Kylo) migrateSchemaV2() error {
 }
 
 func (k *Kylo) listFs() ([]string, error) {
-	args := kaktus.KaktusListFileSystemsArgs{}
-	var reply kaktus.KaktusListFileSystemsReply
-	err := k.RPC("ListFileSystems", args, &reply)
+	args := proto.KaktusListFileSystemsArgs{}
+	var reply proto.KaktusListFileSystemsReply
+	err := k.RPC(proto.RpcKaktusListFileSystems, args, &reply)
 	if err != nil {
 		return []string{}, err
 	}
@@ -100,11 +100,11 @@ func (k *Kylo) listFs() ([]string, error) {
 }
 
 func (k *Kylo) listSubVolumes(fs string) ([]string, error) {
-	args := kaktus.KaktusListFsSubVolumesArgs{
+	args := proto.KaktusListFsSubVolumesArgs{
 		FS: fs,
 	}
-	var reply kaktus.KaktusListFsSubVolumesReply
-	err := k.RPC("ListFsSubVolumes", args, &reply)
+	var reply proto.KaktusListFsSubVolumesReply
+	err := k.RPC(proto.RpcKaktusListFsSubVolumes, args, &reply)
 	if err != nil {
 		return []string{}, err
 	}
@@ -112,12 +112,12 @@ func (k *Kylo) listSubVolumes(fs string) ([]string, error) {
 }
 
 func (k *Kylo) createSubVolume(fs, vol string) (string, int64, error) {
-	args := kaktus.KaktusCreateFsSubVolumeArgs{
+	args := proto.KaktusCreateFsSubVolumeArgs{
 		FS:        fs,
 		SubVolume: vol,
 	}
-	var reply kaktus.KaktusCreateFsSubVolumeReply
-	err := k.RPC("CreateFsSubVolume", args, &reply)
+	var reply proto.KaktusCreateFsSubVolumeReply
+	err := k.RPC(proto.RpcKaktusCreateFsSubVolume, args, &reply)
 	if err != nil {
 		return "", 0, err
 	}
@@ -125,7 +125,7 @@ func (k *Kylo) createSubVolume(fs, vol string) (string, int64, error) {
 }
 
 func (k *Kylo) createNfsBackends(nfs *NFS, idStr, name, path string, clients []string) error {
-	args := kaktus.KaktusCreateNfsBackendsArgs{
+	args := proto.KaktusCreateNfsBackendsArgs{
 		ID:        idStr,
 		Name:      name,
 		FS:        nfs.FS,
@@ -137,8 +137,8 @@ func (k *Kylo) createNfsBackends(nfs *NFS, idStr, name, path string, clients []s
 		Port:      nfs.Ganesha.Port,
 	}
 
-	var reply kaktus.KaktusCreateNfsBackendsReply
-	return k.RPC("CreateNfsBackends", args, &reply)
+	var reply proto.KaktusCreateNfsBackendsReply
+	return k.RPC(proto.RpcKaktusCreateNfsBackends, args, &reply)
 }
 
 func NewKylo(projectId, regionId, nfsId, name, desc, access string, protocols []int32) (*Kylo, error) {
@@ -263,7 +263,7 @@ func FindKyloByName(name string) (*Kylo, error) {
 }
 
 func (k *Kylo) updateNfsBackends(nfs *NFS, idStr, name, path string, clients []string) error {
-	args := kaktus.KaktusUpdateNfsBackendsArgs{
+	args := proto.KaktusUpdateNfsBackendsArgs{
 		ID:        idStr,
 		Name:      name,
 		FS:        nfs.FS,
@@ -275,8 +275,8 @@ func (k *Kylo) updateNfsBackends(nfs *NFS, idStr, name, path string, clients []s
 		Port:      nfs.Ganesha.Port,
 	}
 
-	var reply kaktus.KaktusUpdateNfsBackendsReply
-	return k.RPC("UpdateNfsBackends", args, &reply)
+	var reply proto.KaktusUpdateNfsBackendsReply
+	return k.RPC(proto.RpcKaktusUpdateNfsBackends, args, &reply)
 }
 
 func (k *Kylo) Update(name, desc, access string, protocols []int32) error {
@@ -329,16 +329,16 @@ func (k *Kylo) Save() {
 }
 
 func (k *Kylo) delete(fs, vol string) error {
-	args := kaktus.KaktusDeleteFsSubVolumeArgs{
+	args := proto.KaktusDeleteFsSubVolumeArgs{
 		FS:        fs,
 		SubVolume: vol,
 	}
-	var reply kaktus.KaktusDeleteFsSubVolumeReply
-	return k.RPC("DeleteFsSubVolume", args, &reply)
+	var reply proto.KaktusDeleteFsSubVolumeReply
+	return k.RPC(proto.RpcKaktusDeleteFsSubVolume, args, &reply)
 }
 
 func (k *Kylo) deleteNfsBackends(nfs *NFS, idStr, name, path string, clients []string) error {
-	args := kaktus.KaktusDeleteNfsBackendsArgs{
+	args := proto.KaktusDeleteNfsBackendsArgs{
 		ID:        idStr,
 		Name:      name,
 		FS:        nfs.FS,
@@ -350,8 +350,8 @@ func (k *Kylo) deleteNfsBackends(nfs *NFS, idStr, name, path string, clients []s
 		Port:      nfs.Ganesha.Port,
 	}
 
-	var reply kaktus.KaktusDeleteNfsBackendsReply
-	return k.RPC("DeleteNfsBackends", args, &reply)
+	var reply proto.KaktusDeleteNfsBackendsReply
+	return k.RPC(proto.RpcKaktusDeleteNfsBackends, args, &reply)
 }
 
 func (k *Kylo) Delete() error {

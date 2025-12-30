@@ -9,7 +9,7 @@ package kahuna
 import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kaktus"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -247,10 +247,10 @@ func (k *Kaktus) AverageZoneResources() (*ZoneVirtualResources, error) {
 func (k *Kaktus) Scan() {
 	klog.Debugf("Scanning Kaktus %s", k)
 
-	args := kaktus.KaktusNodeCapabilitiesArgs{}
-	var reply kaktus.KaktusNodeCapabilitiesReply
+	args := proto.KaktusNodeCapabilitiesArgs{}
+	var reply proto.KaktusNodeCapabilitiesReply
 
-	err := k.RPC("NodeCapabilities", args, &reply)
+	err := k.RPC(proto.RpcKaktusNodeCapabilities, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get remote kaktus capabilities: %v", err)
 		return

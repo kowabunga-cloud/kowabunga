@@ -11,7 +11,7 @@ import (
 	"os"
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kaktus"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -324,13 +324,13 @@ func (v *Volume) Exists() bool {
 	}
 
 	// get current volume infos
-	args := kaktus.KaktusGetVolumeInfosArgs{
+	args := proto.KaktusGetVolumeInfosArgs{
 		Pool:   pool.Pool,
 		Volume: v.Name,
 	}
-	var reply kaktus.KaktusGetVolumeInfosReply
+	var reply proto.KaktusGetVolumeInfosReply
 
-	err = pool.RPC("GetVolumeInfos", args, &reply)
+	err = pool.RPC(proto.RpcKaktusGetVolumeInfos, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get remote RBD volume: %v", err)
 		return false
@@ -347,13 +347,13 @@ func (v *Volume) ResizeVolume() error {
 	}
 
 	// get current volume infos
-	args := kaktus.KaktusGetVolumeInfosArgs{
+	args := proto.KaktusGetVolumeInfosArgs{
 		Pool:   pool.Pool,
 		Volume: v.Name,
 	}
-	var reply kaktus.KaktusGetVolumeInfosReply
+	var reply proto.KaktusGetVolumeInfosReply
 
-	err = pool.RPC("GetVolumeInfos", args, &reply)
+	err = pool.RPC(proto.RpcKaktusGetVolumeInfos, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get remote RBD volume: %v", err)
 		return err
@@ -367,14 +367,14 @@ func (v *Volume) ResizeVolume() error {
 
 	// resize volume
 	klog.Debugf("Resizing volume %s to %s", v.String(), HumanByteSize(requestedSize))
-	argsResize := kaktus.KaktusResizeVolumeArgs{
+	argsResize := proto.KaktusResizeVolumeArgs{
 		Pool:   pool.Pool,
 		Volume: v.Name,
 		Size:   requestedSize,
 	}
-	var replyResize kaktus.KaktusResizeVolumeReply
+	var replyResize proto.KaktusResizeVolumeReply
 
-	err = pool.RPC("ResizeVolume", argsResize, &replyResize)
+	err = pool.RPC(proto.RpcKaktusResizeVolume, argsResize, &replyResize)
 	if err != nil {
 		return fmt.Errorf("error trying to resize volume %s: %v", v.Name, err)
 	}
@@ -403,25 +403,25 @@ func (v *Volume) RPC(method string, args, reply any) error {
 }
 
 func (v *Volume) createRaw(pool, vol string, size int64) error {
-	args := kaktus.KaktusCreateRawVolumeArgs{
+	args := proto.KaktusCreateRawVolumeArgs{
 		Pool:   pool,
 		Volume: vol,
 		Size:   uint64(size),
 	}
-	var reply kaktus.KaktusCreateRawVolumeReply
+	var reply proto.KaktusCreateRawVolumeReply
 
-	return v.RPC("CreateRawVolume", args, &reply)
+	return v.RPC(proto.RpcKaktusCreateRawVolume, args, &reply)
 }
 
 func (v *Volume) createTemplate(pool, vol, url string) (uint64, error) {
-	args := kaktus.KaktusCreateTemplateVolumeArgs{
+	args := proto.KaktusCreateTemplateVolumeArgs{
 		Pool:      pool,
 		Volume:    vol,
 		SourceURL: url,
 	}
-	var reply kaktus.KaktusCreateTemplateVolumeReply
+	var reply proto.KaktusCreateTemplateVolumeReply
 
-	err := v.RPC("CreateTemplateVolume", args, &reply)
+	err := v.RPC(proto.RpcKaktusCreateTemplateVolume, args, &reply)
 	if err != nil {
 		return 0, err
 	}
@@ -430,27 +430,27 @@ func (v *Volume) createTemplate(pool, vol, url string) (uint64, error) {
 }
 
 func (v *Volume) createOS(pool, vol, tpl string, size int64) error {
-	args := kaktus.KaktusCreateOsVolumeArgs{
+	args := proto.KaktusCreateOsVolumeArgs{
 		Pool:     pool,
 		Volume:   vol,
 		Size:     uint64(size),
 		Template: tpl,
 	}
-	var reply kaktus.KaktusCreateOsVolumeReply
+	var reply proto.KaktusCreateOsVolumeReply
 
-	return v.RPC("CreateOsVolume", args, &reply)
+	return v.RPC(proto.RpcKaktusCreateOsVolume, args, &reply)
 }
 
 func (v *Volume) createISO(pool, vol string, content []byte, size int64) error {
-	args := kaktus.KaktusCreateIsoVolumeArgs{
+	args := proto.KaktusCreateIsoVolumeArgs{
 		Pool:    pool,
 		Volume:  vol,
 		Size:    uint64(size),
 		Content: content,
 	}
-	var reply kaktus.KaktusCreateIsoVolumeReply
+	var reply proto.KaktusCreateIsoVolumeReply
 
-	return v.RPC("CreateIsoVolume", args, &reply)
+	return v.RPC(proto.RpcKaktusCreateIsoVolume, args, &reply)
 }
 
 func (v *Volume) CreateVolume() error {
@@ -549,14 +549,14 @@ func (v *Volume) Delete() error {
 	if err != nil {
 		return err
 	}
-	args := kaktus.KaktusDeleteVolumeArgs{
+	args := proto.KaktusDeleteVolumeArgs{
 		Pool:          pool.Pool,
 		Volume:        v.Name,
 		WithSnapshots: true,
 	}
-	var reply kaktus.KaktusDeleteVolumeReply
+	var reply proto.KaktusDeleteVolumeReply
 
-	err = pool.RPC("DeleteVolume", args, &reply)
+	err = pool.RPC(proto.RpcKaktusDeleteVolume, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to delete remote RBD volume: %v", err)
 		return err
@@ -593,17 +593,17 @@ func (v *Volume) OverwriteCloudInitVolume(iso *CloudInit) error {
 		return err
 	}
 
-	args := kaktus.KaktusUpdateIsoVolumeArgs{
+	args := proto.KaktusUpdateIsoVolumeArgs{
 		Pool:    pool.Pool,
 		Volume:  v.Name,
 		Size:    uint64(v.Size),
 		Content: imgContent,
 	}
-	var reply kaktus.KaktusUpdateIsoVolumeReply
+	var reply proto.KaktusUpdateIsoVolumeReply
 
 	klog.Debugf("Updating ISO content into volume %s", v.String())
 	v.Size = iso.IsoSize
-	err = pool.RPC("UpdateIsoVolume", args, &reply)
+	err = pool.RPC(proto.RpcKaktusUpdateIsoVolume, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to create remote ISO RBD volume: %v", err)
 		return err

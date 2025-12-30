@@ -9,7 +9,7 @@ package kahuna
 import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kaktus"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -237,12 +237,12 @@ func (p *StoragePool) Scan() {
 	klog.Debugf("Scanning Storage Pool %s", p)
 	updated := false
 
-	args := kaktus.KaktusGetStoragePoolStatsArgs{
+	args := proto.KaktusGetStoragePoolStatsArgs{
 		Pool: p.Pool,
 	}
-	var reply kaktus.KaktusGetStoragePoolStatsReply
+	var reply proto.KaktusGetStoragePoolStatsReply
 
-	err := p.RPC("GetStoragePoolStats", args, &reply)
+	err := p.RPC(proto.RpcKaktusGetStoragePoolStats, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get remote storage pool statistics: %v", err)
 		return

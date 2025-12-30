@@ -9,7 +9,7 @@ package kahuna
 import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kiwi"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -169,12 +169,12 @@ func (k *Kiwi) Model() sdk.Kiwi {
 }
 
 func (k *Kiwi) Reload() error {
-	args := kiwi.KiwiReloadArgs{}
+	args := proto.KiwiReloadArgs{}
 
 	projects := FindProjects()
 	for _, p := range projects {
 
-		domain := kiwi.KiwiReloadArgsDomain{
+		domain := proto.KiwiReloadArgsDomain{
 			Name: p.Domain,
 		}
 
@@ -185,7 +185,7 @@ func (k *Kiwi) Reload() error {
 				return err
 			}
 
-			r := kiwi.KiwiReloadArgsRecord{
+			r := proto.KiwiReloadArgsRecord{
 				Name:      record.Name,
 				Type:      "A",
 				Addresses: record.Addresses,
@@ -208,11 +208,11 @@ func (k *Kiwi) Reload() error {
 			return err
 		}
 
-		domain := kiwi.KiwiReloadArgsDomain{
+		domain := proto.KiwiReloadArgsDomain{
 			Name: region.Domain,
 		}
 
-		r := kiwi.KiwiReloadArgsRecord{
+		r := proto.KiwiReloadArgsRecord{
 			Name:      record.Name,
 			Type:      "A",
 			Addresses: record.Addresses,
@@ -221,57 +221,57 @@ func (k *Kiwi) Reload() error {
 		args.Domains = append(args.Domains, domain)
 	}
 
-	var reply kiwi.KiwiReloadReply
+	var reply proto.KiwiReloadReply
 
-	return k.RPC("Reload", args, &reply)
+	return k.RPC(proto.RpcKiwiReload, args, &reply)
 }
 
 func (k *Kiwi) CreateDnsZone(domain string) error {
-	args := kiwi.KiwiCreateDnsZoneArgs{
+	args := proto.KiwiCreateDnsZoneArgs{
 		Domain: domain,
 	}
-	var reply kiwi.KiwiCreateDnsZoneReply
+	var reply proto.KiwiCreateDnsZoneReply
 
-	return k.RPC("CreateDnsZone", args, &reply)
+	return k.RPC(proto.RpcKiwiCreateDnsZone, args, &reply)
 }
 
 func (k *Kiwi) DeleteDnsZone(domain string) error {
-	args := kiwi.KiwiDeleteDnsZoneArgs{
+	args := proto.KiwiDeleteDnsZoneArgs{
 		Domain: domain,
 	}
-	var reply kiwi.KiwiDeleteDnsZoneReply
+	var reply proto.KiwiDeleteDnsZoneReply
 
-	return k.RPC("DeleteDnsZone", args, &reply)
+	return k.RPC(proto.RpcKiwiDeleteDnsZone, args, &reply)
 }
 
 func (k *Kiwi) CreateDnsRecord(domain, entry string, addr []string) error {
-	args := kiwi.KiwiCreateDnsRecordArgs{
+	args := proto.KiwiCreateDnsRecordArgs{
 		Domain:    domain,
 		Entry:     entry,
 		Addresses: addr,
 	}
-	var reply kiwi.KiwiCreateDnsRecordReply
+	var reply proto.KiwiCreateDnsRecordReply
 
-	return k.RPC("CreateDnsRecord", args, &reply)
+	return k.RPC(proto.RpcKiwiCreateDnsRecord, args, &reply)
 }
 
 func (k *Kiwi) UpdateDnsRecord(domain, entry string, addr []string) error {
-	args := kiwi.KiwiUpdateDnsRecordArgs{
+	args := proto.KiwiUpdateDnsRecordArgs{
 		Domain:    domain,
 		Entry:     entry,
 		Addresses: addr,
 	}
-	var reply kiwi.KiwiUpdateDnsRecordReply
+	var reply proto.KiwiUpdateDnsRecordReply
 
-	return k.RPC("UpdateDnsRecord", args, &reply)
+	return k.RPC(proto.RpcKiwiUpdateDnsRecord, args, &reply)
 }
 
 func (k *Kiwi) DeleteDnsRecord(domain, entry string) error {
-	args := kiwi.KiwiDeleteDnsRecordArgs{
+	args := proto.KiwiDeleteDnsRecordArgs{
 		Domain: domain,
 		Entry:  entry,
 	}
-	var reply kiwi.KiwiDeleteDnsRecordReply
+	var reply proto.KiwiDeleteDnsRecordReply
 
-	return k.RPC("DeleteDnsRecord", args, &reply)
+	return k.RPC(proto.RpcKiwiDeleteDnsRecord, args, &reply)
 }

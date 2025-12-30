@@ -13,7 +13,7 @@ import (
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
-	"github.com/kowabunga-cloud/kowabunga/kowabunga/kaktus"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/sdk"
 )
 
@@ -487,20 +487,20 @@ func (i *Instance) CreateCloudInitVolume() error {
 }
 
 func (i *Instance) create(xml string) error {
-	args := kaktus.KaktusCreateInstanceArgs{
+	args := proto.KaktusCreateInstanceArgs{
 		Name: i.Name,
 		XML:  xml,
 	}
-	var reply kaktus.KaktusCreateInstanceReply
-	return i.RPC("CreateInstance", args, &reply)
+	var reply proto.KaktusCreateInstanceReply
+	return i.RPC(proto.RpcKaktusCreateInstance, args, &reply)
 }
 
 func (i *Instance) CreateInstance() error {
 	// TODO: migrate once and for all in host settings instead of querying at each instance creation ?
-	args := kaktus.KaktusNodeCapabilitiesArgs{}
-	var reply kaktus.KaktusNodeCapabilitiesReply
+	args := proto.KaktusNodeCapabilitiesArgs{}
+	var reply proto.KaktusNodeCapabilitiesReply
 
-	err := i.RPC("NodeCapabilities", args, &reply)
+	err := i.RPC(proto.RpcKaktusNodeCapabilities, args, &reply)
 	if err != nil {
 		klog.Errorf("unable to get host capabilities: %v", err)
 		return err
@@ -648,13 +648,13 @@ func (i *Instance) DeleteDnsRecord() error {
 }
 
 func (i *Instance) get(migratable bool) (string, error) {
-	args := kaktus.KaktusGetInstanceArgs{
+	args := proto.KaktusGetInstanceArgs{
 		Name:       i.Name,
 		Migratable: migratable,
 	}
-	var reply kaktus.KaktusGetInstanceReply
+	var reply proto.KaktusGetInstanceReply
 
-	err := i.RPC("GetInstance", args, &reply)
+	err := i.RPC(proto.RpcKaktusGetInstance, args, &reply)
 	if err != nil {
 		return "", err
 	}
@@ -662,12 +662,12 @@ func (i *Instance) get(migratable bool) (string, error) {
 }
 
 func (i *Instance) update(data string) error {
-	args := kaktus.KaktusUpdateInstanceArgs{
+	args := proto.KaktusUpdateInstanceArgs{
 		Name: i.Name,
 		XML:  data,
 	}
-	var reply kaktus.KaktusUpdateInstanceReply
-	return i.RPC("UpdateInstance", args, &reply)
+	var reply proto.KaktusUpdateInstanceReply
+	return i.RPC(proto.RpcKaktusUpdateInstance, args, &reply)
 }
 
 func (i *Instance) Update(name, desc string, cpu, mem int64, adapters, volumes []string) error {
@@ -809,12 +809,12 @@ func (i *Instance) Save() {
 }
 
 func (i *Instance) delete() error {
-	args := kaktus.KaktusDeleteInstanceArgs{
+	args := proto.KaktusDeleteInstanceArgs{
 		Name: i.Name,
 	}
-	var reply kaktus.KaktusDeleteInstanceReply
+	var reply proto.KaktusDeleteInstanceReply
 
-	return i.RPC("DeleteInstance", args, &reply)
+	return i.RPC(proto.RpcKaktusDeleteInstance, args, &reply)
 }
 
 func (i *Instance) Delete() error {
@@ -929,12 +929,12 @@ func (i *Instance) ComputeCost(res *ZoneVirtualResources) error {
 }
 
 func (i *Instance) GetState() (sdk.InstanceState, error) {
-	args := kaktus.KaktusGetInstanceStateArgs{
+	args := proto.KaktusGetInstanceStateArgs{
 		Name: i.Name,
 	}
-	var reply kaktus.KaktusGetInstanceStateReply
+	var reply proto.KaktusGetInstanceStateReply
 
-	err := i.RPC("GetInstanceState", args, &reply)
+	err := i.RPC(proto.RpcKaktusGetInstanceState, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get instance %s state: %v", i.Name, err)
 		return sdk.InstanceState{}, err
@@ -947,12 +947,12 @@ func (i *Instance) GetState() (sdk.InstanceState, error) {
 }
 
 func (i *Instance) GetRemoteConnectionURL() (sdk.InstanceRemoteAccess, error) {
-	args := kaktus.KaktusGetInstanceRemoteConnectionUrlArgs{
+	args := proto.KaktusGetInstanceRemoteConnectionUrlArgs{
 		Name: i.Name,
 	}
-	var reply kaktus.KaktusGetInstanceRemoteConnectionUrlReply
+	var reply proto.KaktusGetInstanceRemoteConnectionUrlReply
 
-	err := i.RPC("GetInstanceRemoteConnectionUrl", args, &reply)
+	err := i.RPC(proto.RpcKaktusGetInstanceRemoteConnectionUrl, args, &reply)
 	if err != nil {
 		klog.Errorf("Unable to get instance %s remote connection URL: %v", i.Name, err)
 		return sdk.InstanceRemoteAccess{}, err
@@ -965,12 +965,12 @@ func (i *Instance) GetRemoteConnectionURL() (sdk.InstanceRemoteAccess, error) {
 
 // Is instance running ?
 func (i *Instance) IsRunning() bool {
-	args := kaktus.KaktusInstanceIsRunningArgs{
+	args := proto.KaktusInstanceIsRunningArgs{
 		Name: i.Name,
 	}
-	var reply kaktus.KaktusInstanceIsRunningReply
+	var reply proto.KaktusInstanceIsRunningReply
 
-	err := i.RPC("InstanceIsRunning", args, &reply)
+	err := i.RPC(proto.RpcKaktusInstanceIsRunning, args, &reply)
 	if err != nil {
 		return false
 	}
@@ -978,18 +978,18 @@ func (i *Instance) IsRunning() bool {
 	return reply.Running
 }
 
-func (i *Instance) operation(action string, op kaktus.KaktusInstanceOperation) error {
+func (i *Instance) operation(action string, op proto.KaktusInstanceOperation) error {
 	if action != "" {
 		klog.Infof("%s instance %s (%s)", action, i.String(), i.Name)
 	}
 
-	args := kaktus.KaktusInstanceOperationArgs{
+	args := proto.KaktusInstanceOperationArgs{
 		Name:   i.Name,
 		Action: op,
 	}
-	var reply kaktus.KaktusInstanceOperationReply
+	var reply proto.KaktusInstanceOperationReply
 
-	err := i.RPC("InstanceOperation", args, &reply)
+	err := i.RPC(proto.RpcKaktusInstanceOperation, args, &reply)
 	if err != nil {
 		return err
 	}
@@ -999,40 +999,40 @@ func (i *Instance) operation(action string, op kaktus.KaktusInstanceOperation) e
 
 // Software OS reboot
 func (i *Instance) Reboot() error {
-	return i.operation("Rebooting", kaktus.KaktusInstanceOpSoftReboot)
+	return i.operation("Rebooting", proto.KaktusInstanceOpSoftReboot)
 }
 
 // Hardware Reset
 func (i *Instance) Reset() error {
-	return i.operation("Hardware reset of", kaktus.KaktusInstanceOpHardReboot)
+	return i.operation("Hardware reset of", proto.KaktusInstanceOpHardReboot)
 }
 
 // Software PM Suspend
 func (i *Instance) Suspend() error {
-	return i.operation("Suspending", kaktus.KaktusInstanceOpPmSuspend)
+	return i.operation("Suspending", proto.KaktusInstanceOpPmSuspend)
 }
 
 // Software PM Resume
 func (i *Instance) Resume() error {
-	return i.operation("Resuming", kaktus.KaktusInstanceOpPmResume)
+	return i.operation("Resuming", proto.KaktusInstanceOpPmResume)
 }
 
 // Enable auto-start
 func (i *Instance) AutoStart() error {
-	return i.operation("", kaktus.KaktusInstanceOpAutoStart)
+	return i.operation("", proto.KaktusInstanceOpAutoStart)
 }
 
 // Hardware Boot
 func (i *Instance) Start() error {
-	return i.operation("Starting", kaktus.KaktusInstanceOpStart)
+	return i.operation("Starting", proto.KaktusInstanceOpStart)
 }
 
 // Hardware Shutdown
 func (i *Instance) Stop() error {
-	return i.operation("Stopping", kaktus.KaktusInstanceOpHardShutdown)
+	return i.operation("Stopping", proto.KaktusInstanceOpHardShutdown)
 }
 
 // Software Shutdown
 func (i *Instance) Shutdown() error {
-	return i.operation("Shutting down", kaktus.KaktusInstanceOpSoftShutdown)
+	return i.operation("Shutting down", proto.KaktusInstanceOpSoftShutdown)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 )
 
 type Kaktus struct {
@@ -40,20 +41,7 @@ func (k *Kaktus) Capabilities(args *agents.CapabilitiesArgs, reply *agents.Capab
  * RPC NodeCapabilities()
  */
 
-type KaktusNodeCapabilitiesArgs struct{}
-type KaktusNodeCapabilitiesReply struct {
-	Arch             string
-	Vendor           string
-	Model            string
-	Sockets          uint8
-	Cores            uint16
-	Threads          uint16
-	Memory           uint64
-	GuestEmulator    string
-	GuestMachineName string
-}
-
-func (k *Kaktus) NodeCapabilities(args *KaktusNodeCapabilitiesArgs, reply *KaktusNodeCapabilitiesReply) error {
+func (k *Kaktus) NodeCapabilities(args *proto.KaktusNodeCapabilitiesArgs, reply *proto.KaktusNodeCapabilitiesReply) error {
 
 	caps, err := k.agent.lcs.GetHostCapabilities()
 	if err != nil {
@@ -90,7 +78,7 @@ func (k *Kaktus) NodeCapabilities(args *KaktusNodeCapabilitiesArgs, reply *Kaktu
 		return err
 	}
 
-	*reply = KaktusNodeCapabilitiesReply{
+	*reply = proto.KaktusNodeCapabilitiesReply{
 		Arch:             caps.Host.CPU.Arch,
 		Vendor:           caps.Host.CPU.Vendor,
 		Model:            caps.Host.CPU.Model,
@@ -109,15 +97,9 @@ func (k *Kaktus) NodeCapabilities(args *KaktusNodeCapabilitiesArgs, reply *Kaktu
  * RPC CreateInstance()
  */
 
-type KaktusCreateInstanceArgs struct {
-	Name string
-	XML  string
-}
-type KaktusCreateInstanceReply struct{}
-
-func (k *Kaktus) CreateInstance(args *KaktusCreateInstanceArgs, reply *KaktusCreateInstanceReply) error {
+func (k *Kaktus) CreateInstance(args *proto.KaktusCreateInstanceArgs, reply *proto.KaktusCreateInstanceReply) error {
 	err := k.agent.lcs.CreateInstance(args.Name, args.XML)
-	*reply = KaktusCreateInstanceReply{}
+	*reply = proto.KaktusCreateInstanceReply{}
 	return err
 }
 
@@ -125,18 +107,9 @@ func (k *Kaktus) CreateInstance(args *KaktusCreateInstanceArgs, reply *KaktusCre
  * RPC GetInstance()
  */
 
-type KaktusGetInstanceArgs struct {
-	Name       string
-	Migratable bool
-}
-
-type KaktusGetInstanceReply struct {
-	XML string
-}
-
-func (k *Kaktus) GetInstance(args *KaktusGetInstanceArgs, reply *KaktusGetInstanceReply) error {
+func (k *Kaktus) GetInstance(args *proto.KaktusGetInstanceArgs, reply *proto.KaktusGetInstanceReply) error {
 	xml, err := k.agent.lcs.GetInstanceDescription(args.Name, args.Migratable)
-	*reply = KaktusGetInstanceReply{
+	*reply = proto.KaktusGetInstanceReply{
 		XML: xml,
 	}
 	return err
@@ -146,15 +119,9 @@ func (k *Kaktus) GetInstance(args *KaktusGetInstanceArgs, reply *KaktusGetInstan
  * RPC DeleteInstance()
  */
 
-type KaktusDeleteInstanceArgs struct {
-	Name string
-}
-
-type KaktusDeleteInstanceReply struct{}
-
-func (k *Kaktus) DeleteInstance(args *KaktusDeleteInstanceArgs, reply *KaktusDeleteInstanceReply) error {
+func (k *Kaktus) DeleteInstance(args *proto.KaktusDeleteInstanceArgs, reply *proto.KaktusDeleteInstanceReply) error {
 	err := k.agent.lcs.DeleteInstance(args.Name)
-	*reply = KaktusDeleteInstanceReply{}
+	*reply = proto.KaktusDeleteInstanceReply{}
 	return err
 }
 
@@ -162,16 +129,9 @@ func (k *Kaktus) DeleteInstance(args *KaktusDeleteInstanceArgs, reply *KaktusDel
  * RPC UpdateInstance()
  */
 
-type KaktusUpdateInstanceArgs struct {
-	Name string
-	XML  string
-}
-
-type KaktusUpdateInstanceReply struct{}
-
-func (k *Kaktus) UpdateInstance(args *KaktusUpdateInstanceArgs, reply *KaktusUpdateInstanceReply) error {
+func (k *Kaktus) UpdateInstance(args *proto.KaktusUpdateInstanceArgs, reply *proto.KaktusUpdateInstanceReply) error {
 	err := k.agent.lcs.UpdateInstance(args.Name, args.XML)
-	*reply = KaktusUpdateInstanceReply{}
+	*reply = proto.KaktusUpdateInstanceReply{}
 	return err
 }
 
@@ -179,18 +139,9 @@ func (k *Kaktus) UpdateInstance(args *KaktusUpdateInstanceArgs, reply *KaktusUpd
  * RPC GetInstanceState()
  */
 
-type KaktusGetInstanceStateArgs struct {
-	Name string
-}
-
-type KaktusGetInstanceStateReply struct {
-	State  string
-	Reason string
-}
-
-func (k *Kaktus) GetInstanceState(args *KaktusGetInstanceStateArgs, reply *KaktusGetInstanceStateReply) error {
+func (k *Kaktus) GetInstanceState(args *proto.KaktusGetInstanceStateArgs, reply *proto.KaktusGetInstanceStateReply) error {
 	state, reason, err := k.agent.lcs.GetInstanceState(args.Name)
-	*reply = KaktusGetInstanceStateReply{
+	*reply = proto.KaktusGetInstanceStateReply{
 		State:  state,
 		Reason: reason,
 	}
@@ -201,17 +152,9 @@ func (k *Kaktus) GetInstanceState(args *KaktusGetInstanceStateArgs, reply *Kaktu
  * RPC InstanceIsRunning()
  */
 
-type KaktusInstanceIsRunningArgs struct {
-	Name string
-}
-
-type KaktusInstanceIsRunningReply struct {
-	Running bool
-}
-
-func (k *Kaktus) InstanceIsRunning(args *KaktusInstanceIsRunningArgs, reply *KaktusInstanceIsRunningReply) error {
+func (k *Kaktus) InstanceIsRunning(args *proto.KaktusInstanceIsRunningArgs, reply *proto.KaktusInstanceIsRunningReply) error {
 	state := k.agent.lcs.IsInstanceRunning(args.Name)
-	*reply = KaktusInstanceIsRunningReply{
+	*reply = proto.KaktusInstanceIsRunningReply{
 		Running: state,
 	}
 	return nil
@@ -221,17 +164,9 @@ func (k *Kaktus) InstanceIsRunning(args *KaktusInstanceIsRunningArgs, reply *Kak
  * RPC GetInstanceRemoteConnectionUrl()
  */
 
-type KaktusGetInstanceRemoteConnectionUrlArgs struct {
-	Name string
-}
-
-type KaktusGetInstanceRemoteConnectionUrlReply struct {
-	URL string
-}
-
-func (k *Kaktus) GetInstanceRemoteConnectionUrl(args *KaktusGetInstanceRemoteConnectionUrlArgs, reply *KaktusGetInstanceRemoteConnectionUrlReply) error {
+func (k *Kaktus) GetInstanceRemoteConnectionUrl(args *proto.KaktusGetInstanceRemoteConnectionUrlArgs, reply *proto.KaktusGetInstanceRemoteConnectionUrlReply) error {
 	url, err := k.agent.lcs.GetInstanceRemoteConnectionUrl(args.Name)
-	*reply = KaktusGetInstanceRemoteConnectionUrlReply{
+	*reply = proto.KaktusGetInstanceRemoteConnectionUrlReply{
 		URL: url,
 	}
 	return err
@@ -241,45 +176,25 @@ func (k *Kaktus) GetInstanceRemoteConnectionUrl(args *KaktusGetInstanceRemoteCon
  * RPC InstanceOperation()
  */
 
-type KaktusInstanceOperationArgs struct {
-	Name   string
-	Action KaktusInstanceOperation
-}
-
-type KaktusInstanceOperationReply struct{}
-
-type KaktusInstanceOperation int
-
-const (
-	KaktusInstanceOpAutoStart KaktusInstanceOperation = iota
-	KaktusInstanceOpStart
-	KaktusInstanceOpSoftReboot
-	KaktusInstanceOpHardReboot
-	KaktusInstanceOpHardShutdown
-	KaktusInstanceOpSoftShutdown
-	KaktusInstanceOpPmSuspend
-	KaktusInstanceOpPmResume
-)
-
-func (k *Kaktus) InstanceOperation(args *KaktusInstanceOperationArgs, reply *KaktusInstanceOperationReply) error {
-	*reply = KaktusInstanceOperationReply{}
+func (k *Kaktus) InstanceOperation(args *proto.KaktusInstanceOperationArgs, reply *proto.KaktusInstanceOperationReply) error {
+	*reply = proto.KaktusInstanceOperationReply{}
 
 	switch args.Action {
-	case KaktusInstanceOpAutoStart:
+	case proto.KaktusInstanceOpAutoStart:
 		return k.agent.lcs.AutoStartInstance(args.Name)
-	case KaktusInstanceOpStart:
+	case proto.KaktusInstanceOpStart:
 		return k.agent.lcs.StartInstance(args.Name)
-	case KaktusInstanceOpSoftReboot:
+	case proto.KaktusInstanceOpSoftReboot:
 		return k.agent.lcs.RebootInstance(args.Name)
-	case KaktusInstanceOpHardReboot:
+	case proto.KaktusInstanceOpHardReboot:
 		return k.agent.lcs.ResetInstance(args.Name)
-	case KaktusInstanceOpSoftShutdown:
+	case proto.KaktusInstanceOpSoftShutdown:
 		return k.agent.lcs.ShutdownInstance(args.Name)
-	case KaktusInstanceOpHardShutdown:
+	case proto.KaktusInstanceOpHardShutdown:
 		return k.agent.lcs.StopInstance(args.Name)
-	case KaktusInstanceOpPmSuspend:
+	case proto.KaktusInstanceOpPmSuspend:
 		return k.agent.lcs.SuspendInstance(args.Name)
-	case KaktusInstanceOpPmResume:
+	case proto.KaktusInstanceOpPmResume:
 		return k.agent.lcs.ResumeInstance(args.Name)
 	}
 
@@ -290,19 +205,9 @@ func (k *Kaktus) InstanceOperation(args *KaktusInstanceOperationArgs, reply *Kak
  * RPC GetStoragePoolStats()
  */
 
-type KaktusGetStoragePoolStatsArgs struct {
-	Pool string
-}
-
-type KaktusGetStoragePoolStatsReply struct {
-	Allocated uint64
-	Available uint64
-	Capacity  uint64
-}
-
-func (k *Kaktus) GetStoragePoolStats(args *KaktusGetStoragePoolStatsArgs, reply *KaktusGetStoragePoolStatsReply) error {
+func (k *Kaktus) GetStoragePoolStats(args *proto.KaktusGetStoragePoolStatsArgs, reply *proto.KaktusGetStoragePoolStatsReply) error {
 	used, available, total, err := k.agent.ceph.GetPoolStats(args.Pool)
-	*reply = KaktusGetStoragePoolStatsReply{
+	*reply = proto.KaktusGetStoragePoolStatsReply{
 		Allocated: used,
 		Available: available,
 		Capacity:  total,
@@ -314,17 +219,9 @@ func (k *Kaktus) GetStoragePoolStats(args *KaktusGetStoragePoolStatsArgs, reply 
  * RPC CreateRawVolume()
  */
 
-type KaktusCreateRawVolumeArgs struct {
-	Pool   string
-	Volume string
-	Size   uint64
-}
-
-type KaktusCreateRawVolumeReply struct{}
-
-func (k *Kaktus) CreateRawVolume(args *KaktusCreateRawVolumeArgs, reply *KaktusCreateRawVolumeReply) error {
+func (k *Kaktus) CreateRawVolume(args *proto.KaktusCreateRawVolumeArgs, reply *proto.KaktusCreateRawVolumeReply) error {
 	err := k.agent.ceph.CreateRbdVolume(args.Pool, args.Volume, args.Size)
-	*reply = KaktusCreateRawVolumeReply{}
+	*reply = proto.KaktusCreateRawVolumeReply{}
 	return err
 }
 
@@ -332,19 +229,9 @@ func (k *Kaktus) CreateRawVolume(args *KaktusCreateRawVolumeArgs, reply *KaktusC
  * RPC CreateTemplateVolume()
  */
 
-type KaktusCreateTemplateVolumeArgs struct {
-	Pool      string
-	Volume    string
-	SourceURL string
-}
-
-type KaktusCreateTemplateVolumeReply struct {
-	Size uint64
-}
-
-func (k *Kaktus) CreateTemplateVolume(args *KaktusCreateTemplateVolumeArgs, reply *KaktusCreateTemplateVolumeReply) error {
+func (k *Kaktus) CreateTemplateVolume(args *proto.KaktusCreateTemplateVolumeArgs, reply *proto.KaktusCreateTemplateVolumeReply) error {
 	size, err := k.agent.ceph.CreateRbdVolumeFromUrl(args.Pool, args.Volume, args.SourceURL)
-	*reply = KaktusCreateTemplateVolumeReply{
+	*reply = proto.KaktusCreateTemplateVolumeReply{
 		Size: size,
 	}
 	return err
@@ -354,18 +241,9 @@ func (k *Kaktus) CreateTemplateVolume(args *KaktusCreateTemplateVolumeArgs, repl
  * RPC CreateOsVolume()
  */
 
-type KaktusCreateOsVolumeArgs struct {
-	Pool     string
-	Volume   string
-	Size     uint64
-	Template string
-}
-
-type KaktusCreateOsVolumeReply struct{}
-
-func (k *Kaktus) CreateOsVolume(args *KaktusCreateOsVolumeArgs, reply *KaktusCreateOsVolumeReply) error {
+func (k *Kaktus) CreateOsVolume(args *proto.KaktusCreateOsVolumeArgs, reply *proto.KaktusCreateOsVolumeReply) error {
 	err := k.agent.ceph.CloneRbdVolume(args.Pool, args.Template, args.Volume, args.Size)
-	*reply = KaktusCreateOsVolumeReply{}
+	*reply = proto.KaktusCreateOsVolumeReply{}
 	return err
 }
 
@@ -373,18 +251,9 @@ func (k *Kaktus) CreateOsVolume(args *KaktusCreateOsVolumeArgs, reply *KaktusCre
  * RPC CreateIsoVolume()
  */
 
-type KaktusCreateIsoVolumeArgs struct {
-	Pool    string
-	Volume  string
-	Size    uint64
-	Content []byte
-}
-
-type KaktusCreateIsoVolumeReply struct{}
-
-func (k *Kaktus) CreateIsoVolume(args *KaktusCreateIsoVolumeArgs, reply *KaktusCreateIsoVolumeReply) error {
+func (k *Kaktus) CreateIsoVolume(args *proto.KaktusCreateIsoVolumeArgs, reply *proto.KaktusCreateIsoVolumeReply) error {
 	err := k.agent.ceph.CreateRbdVolumeFromBinData(args.Pool, args.Volume, args.Size, args.Content)
-	*reply = KaktusCreateIsoVolumeReply{}
+	*reply = proto.KaktusCreateIsoVolumeReply{}
 	return err
 }
 
@@ -392,18 +261,9 @@ func (k *Kaktus) CreateIsoVolume(args *KaktusCreateIsoVolumeArgs, reply *KaktusC
  * RPC UpdateIsoVolume()
  */
 
-type KaktusUpdateIsoVolumeArgs struct {
-	Pool    string
-	Volume  string
-	Size    uint64
-	Content []byte
-}
-
-type KaktusUpdateIsoVolumeReply struct{}
-
-func (k *Kaktus) UpdateIsoVolume(args *KaktusUpdateIsoVolumeArgs, reply *KaktusUpdateIsoVolumeReply) error {
+func (k *Kaktus) UpdateIsoVolume(args *proto.KaktusUpdateIsoVolumeArgs, reply *proto.KaktusUpdateIsoVolumeReply) error {
 	err := k.agent.ceph.UpdateRbdVolumeFromBinData(args.Pool, args.Volume, args.Size, args.Content)
-	*reply = KaktusUpdateIsoVolumeReply{}
+	*reply = proto.KaktusUpdateIsoVolumeReply{}
 	return err
 }
 
@@ -411,18 +271,9 @@ func (k *Kaktus) UpdateIsoVolume(args *KaktusUpdateIsoVolumeArgs, reply *KaktusU
  * RPC GetVolumeInfos()
  */
 
-type KaktusGetVolumeInfosArgs struct {
-	Pool   string
-	Volume string
-}
-
-type KaktusGetVolumeInfosReply struct {
-	Size uint64
-}
-
-func (k *Kaktus) GetVolumeInfos(args *KaktusGetVolumeInfosArgs, reply *KaktusGetVolumeInfosReply) error {
+func (k *Kaktus) GetVolumeInfos(args *proto.KaktusGetVolumeInfosArgs, reply *proto.KaktusGetVolumeInfosReply) error {
 	size, err := k.agent.ceph.GetRbdVolumeInfos(args.Pool, args.Volume)
-	*reply = KaktusGetVolumeInfosReply{
+	*reply = proto.KaktusGetVolumeInfosReply{
 		Size: size,
 	}
 	return err
@@ -432,17 +283,9 @@ func (k *Kaktus) GetVolumeInfos(args *KaktusGetVolumeInfosArgs, reply *KaktusGet
  * RPC ResizeVolume()
  */
 
-type KaktusResizeVolumeArgs struct {
-	Pool   string
-	Volume string
-	Size   uint64
-}
-
-type KaktusResizeVolumeReply struct{}
-
-func (k *Kaktus) ResizeVolume(args *KaktusResizeVolumeArgs, reply *KaktusResizeVolumeReply) error {
+func (k *Kaktus) ResizeVolume(args *proto.KaktusResizeVolumeArgs, reply *proto.KaktusResizeVolumeReply) error {
 	err := k.agent.ceph.ResizeRbdVolume(args.Pool, args.Volume, args.Size)
-	*reply = KaktusResizeVolumeReply{}
+	*reply = proto.KaktusResizeVolumeReply{}
 	return err
 }
 
@@ -450,17 +293,9 @@ func (k *Kaktus) ResizeVolume(args *KaktusResizeVolumeArgs, reply *KaktusResizeV
  * RPC DeleteVolume()
  */
 
-type KaktusDeleteVolumeArgs struct {
-	Pool          string
-	Volume        string
-	WithSnapshots bool
-}
-
-type KaktusDeleteVolumeReply struct{}
-
-func (k *Kaktus) DeleteVolume(args *KaktusDeleteVolumeArgs, reply *KaktusDeleteVolumeReply) error {
+func (k *Kaktus) DeleteVolume(args *proto.KaktusDeleteVolumeArgs, reply *proto.KaktusDeleteVolumeReply) error {
 	err := k.agent.ceph.DeleteRbdVolume(args.Pool, args.Volume, args.WithSnapshots)
-	*reply = KaktusDeleteVolumeReply{}
+	*reply = proto.KaktusDeleteVolumeReply{}
 	return err
 }
 
@@ -470,14 +305,9 @@ func (k *Kaktus) DeleteVolume(args *KaktusDeleteVolumeArgs, reply *KaktusDeleteV
  * RPC ListFileSystems()
  */
 
-type KaktusListFileSystemsArgs struct{}
-type KaktusListFileSystemsReply struct {
-	FS []string
-}
-
-func (k *Kaktus) ListFileSystems(args *KaktusListFileSystemsArgs, reply *KaktusListFileSystemsReply) error {
+func (k *Kaktus) ListFileSystems(args *proto.KaktusListFileSystemsArgs, reply *proto.KaktusListFileSystemsReply) error {
 	volumes, err := k.agent.ceph.ListVolumes()
-	*reply = KaktusListFileSystemsReply{
+	*reply = proto.KaktusListFileSystemsReply{
 		FS: volumes,
 	}
 	return err
@@ -487,17 +317,9 @@ func (k *Kaktus) ListFileSystems(args *KaktusListFileSystemsArgs, reply *KaktusL
  * RPC ListFsSubVolumes()
  */
 
-type KaktusListFsSubVolumesArgs struct {
-	FS string
-}
-
-type KaktusListFsSubVolumesReply struct {
-	SubVolumes []string
-}
-
-func (k *Kaktus) ListFsSubVolumes(args *KaktusListFsSubVolumesArgs, reply *KaktusListFsSubVolumesReply) error {
+func (k *Kaktus) ListFsSubVolumes(args *proto.KaktusListFsSubVolumesArgs, reply *proto.KaktusListFsSubVolumesReply) error {
 	subvolumes, err := k.agent.ceph.ListSubVolumes(args.FS)
-	*reply = KaktusListFsSubVolumesReply{
+	*reply = proto.KaktusListFsSubVolumesReply{
 		SubVolumes: subvolumes,
 	}
 	return err
@@ -507,19 +329,9 @@ func (k *Kaktus) ListFsSubVolumes(args *KaktusListFsSubVolumesArgs, reply *Kaktu
  * RPC CreateFsSubVolume()
  */
 
-type KaktusCreateFsSubVolumeArgs struct {
-	FS        string
-	SubVolume string
-}
-
-type KaktusCreateFsSubVolumeReply struct {
-	Path      string
-	BytesUsed int64
-}
-
-func (k *Kaktus) CreateFsSubVolume(args *KaktusCreateFsSubVolumeArgs, reply *KaktusCreateFsSubVolumeReply) error {
+func (k *Kaktus) CreateFsSubVolume(args *proto.KaktusCreateFsSubVolumeArgs, reply *proto.KaktusCreateFsSubVolumeReply) error {
 	path, size, err := k.agent.ceph.CreateSubVolume(args.FS, args.SubVolume)
-	*reply = KaktusCreateFsSubVolumeReply{
+	*reply = proto.KaktusCreateFsSubVolumeReply{
 		Path:      path,
 		BytesUsed: size,
 	}
@@ -530,15 +342,9 @@ func (k *Kaktus) CreateFsSubVolume(args *KaktusCreateFsSubVolumeArgs, reply *Kak
  * RPC DeleteFsSubVolume()
  */
 
-type KaktusDeleteFsSubVolumeArgs struct {
-	FS        string
-	SubVolume string
-}
-type KaktusDeleteFsSubVolumeReply struct{}
-
-func (k *Kaktus) DeleteFsSubVolume(args *KaktusDeleteFsSubVolumeArgs, reply *KaktusDeleteFsSubVolumeReply) error {
+func (k *Kaktus) DeleteFsSubVolume(args *proto.KaktusDeleteFsSubVolumeArgs, reply *proto.KaktusDeleteFsSubVolumeReply) error {
 	err := k.agent.ceph.DeleteSubVolume(args.FS, args.SubVolume)
-	*reply = KaktusDeleteFsSubVolumeReply{}
+	*reply = proto.KaktusDeleteFsSubVolumeReply{}
 	return err
 }
 
@@ -548,22 +354,9 @@ func (k *Kaktus) DeleteFsSubVolume(args *KaktusDeleteFsSubVolumeArgs, reply *Kak
  * RPC CreateNfsBackends()
  */
 
-type KaktusCreateNfsBackendsArgs struct {
-	ID        string
-	Name      string
-	FS        string
-	Path      string
-	Access    string
-	Protocols []int32
-	Clients   []string
-	Backends  []string
-	Port      int
-}
-type KaktusCreateNfsBackendsReply struct{}
-
-func (k *Kaktus) CreateNfsBackends(args *KaktusCreateNfsBackendsArgs, reply *KaktusCreateNfsBackendsReply) error {
+func (k *Kaktus) CreateNfsBackends(args *proto.KaktusCreateNfsBackendsArgs, reply *proto.KaktusCreateNfsBackendsReply) error {
 	err := k.agent.nfs.CreateBackends(args.ID, args.Name, args.FS, args.Path, args.Access, args.Protocols, args.Clients, args.Backends, args.Port)
-	*reply = KaktusCreateNfsBackendsReply{}
+	*reply = proto.KaktusCreateNfsBackendsReply{}
 	return err
 }
 
@@ -571,22 +364,9 @@ func (k *Kaktus) CreateNfsBackends(args *KaktusCreateNfsBackendsArgs, reply *Kak
  * RPC UpdateNfsBackends()
  */
 
-type KaktusUpdateNfsBackendsArgs struct {
-	ID        string
-	Name      string
-	FS        string
-	Path      string
-	Access    string
-	Protocols []int32
-	Clients   []string
-	Backends  []string
-	Port      int
-}
-type KaktusUpdateNfsBackendsReply struct{}
-
-func (k *Kaktus) UpdateNfsBackends(args *KaktusUpdateNfsBackendsArgs, reply *KaktusUpdateNfsBackendsReply) error {
+func (k *Kaktus) UpdateNfsBackends(args *proto.KaktusUpdateNfsBackendsArgs, reply *proto.KaktusUpdateNfsBackendsReply) error {
 	err := k.agent.nfs.UpdateBackends(args.ID, args.Name, args.FS, args.Path, args.Access, args.Protocols, args.Clients, args.Backends, args.Port)
-	*reply = KaktusUpdateNfsBackendsReply{}
+	*reply = proto.KaktusUpdateNfsBackendsReply{}
 	return err
 }
 
@@ -594,21 +374,8 @@ func (k *Kaktus) UpdateNfsBackends(args *KaktusUpdateNfsBackendsArgs, reply *Kak
  * RPC DeleteNfsBackends()
  */
 
-type KaktusDeleteNfsBackendsArgs struct {
-	ID        string
-	Name      string
-	FS        string
-	Path      string
-	Access    string
-	Protocols []int32
-	Clients   []string
-	Backends  []string
-	Port      int
-}
-type KaktusDeleteNfsBackendsReply struct{}
-
-func (k *Kaktus) DeleteNfsBackends(args *KaktusDeleteNfsBackendsArgs, reply *KaktusDeleteNfsBackendsReply) error {
+func (k *Kaktus) DeleteNfsBackends(args *proto.KaktusDeleteNfsBackendsArgs, reply *proto.KaktusDeleteNfsBackendsReply) error {
 	err := k.agent.nfs.DeleteBackends(args.ID, args.Name, args.FS, args.Path, args.Access, args.Protocols, args.Clients, args.Backends, args.Port)
-	*reply = KaktusDeleteNfsBackendsReply{}
+	*reply = proto.KaktusDeleteNfsBackendsReply{}
 	return err
 }

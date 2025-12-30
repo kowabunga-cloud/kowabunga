@@ -12,6 +12,7 @@ import (
 
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/agents"
 	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/klog"
+	"github.com/kowabunga-cloud/kowabunga/kowabunga/common/proto"
 )
 
 type Kiwi struct {
@@ -40,24 +41,7 @@ func (k *Kiwi) Capabilities(args *agents.CapabilitiesArgs, reply *agents.Capabil
  * RPC Reload()
  */
 
-type KiwiReloadArgs struct {
-	Domains []KiwiReloadArgsDomain
-}
-
-type KiwiReloadArgsDomain struct {
-	Name    string
-	Records []KiwiReloadArgsRecord
-}
-
-type KiwiReloadArgsRecord struct {
-	Name      string
-	Type      string
-	Addresses []string
-}
-
-type KiwiReloadReply struct{}
-
-func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
+func (k *Kiwi) Reload(args *proto.KiwiReloadArgs, reply *proto.KiwiReloadReply) error {
 	klog.Infof("Reloading Kiwi agent configuration ...")
 
 	klog.Debugf("Kiwi Config Args: %+v", args)
@@ -74,7 +58,7 @@ func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
 	}
 	k.agent.dns.UpdateAllRecords(dnsRecords)
 
-	*reply = KiwiReloadReply{}
+	*reply = proto.KiwiReloadReply{}
 	return nil
 }
 
@@ -82,14 +66,9 @@ func (k *Kiwi) Reload(args *KiwiReloadArgs, reply *KiwiReloadReply) error {
  * RPC CreateDnsZone()
  */
 
-type KiwiCreateDnsZoneArgs struct {
-	Domain string
-}
-type KiwiCreateDnsZoneReply struct{}
-
-func (k *Kiwi) CreateDnsZone(args *KiwiCreateDnsZoneArgs, reply *KiwiCreateDnsZoneReply) error {
+func (k *Kiwi) CreateDnsZone(args *proto.KiwiCreateDnsZoneArgs, reply *proto.KiwiCreateDnsZoneReply) error {
 	// do nothing
-	*reply = KiwiCreateDnsZoneReply{}
+	*reply = proto.KiwiCreateDnsZoneReply{}
 	return nil
 }
 
@@ -97,14 +76,9 @@ func (k *Kiwi) CreateDnsZone(args *KiwiCreateDnsZoneArgs, reply *KiwiCreateDnsZo
  * RPC DeleteDnsZone()
  */
 
-type KiwiDeleteDnsZoneArgs struct {
-	Domain string
-}
-type KiwiDeleteDnsZoneReply struct{}
-
-func (k *Kiwi) DeleteDnsZone(args *KiwiDeleteDnsZoneArgs, reply *KiwiDeleteDnsZoneReply) error {
+func (k *Kiwi) DeleteDnsZone(args *proto.KiwiDeleteDnsZoneArgs, reply *proto.KiwiDeleteDnsZoneReply) error {
 	// do nothing
-	*reply = KiwiDeleteDnsZoneReply{}
+	*reply = proto.KiwiDeleteDnsZoneReply{}
 	return nil
 }
 
@@ -112,19 +86,12 @@ func (k *Kiwi) DeleteDnsZone(args *KiwiDeleteDnsZoneArgs, reply *KiwiDeleteDnsZo
  * RPC CreateDnsRecord()
  */
 
-type KiwiCreateDnsRecordArgs struct {
-	Domain    string
-	Entry     string
-	Addresses []string
-}
-type KiwiCreateDnsRecordReply struct{}
-
-func (k *Kiwi) CreateDnsRecord(args *KiwiCreateDnsRecordArgs, reply *KiwiCreateDnsRecordReply) error {
+func (k *Kiwi) CreateDnsRecord(args *proto.KiwiCreateDnsRecordArgs, reply *proto.KiwiCreateDnsRecordReply) error {
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	value := strings.Join(args.Addresses, ",")
 	err := k.agent.dns.AddRecord(key, value)
 
-	*reply = KiwiCreateDnsRecordReply{}
+	*reply = proto.KiwiCreateDnsRecordReply{}
 
 	return err
 }
@@ -133,19 +100,12 @@ func (k *Kiwi) CreateDnsRecord(args *KiwiCreateDnsRecordArgs, reply *KiwiCreateD
  * RPC UpdateDnsRecord()
  */
 
-type KiwiUpdateDnsRecordArgs struct {
-	Domain    string
-	Entry     string
-	Addresses []string
-}
-type KiwiUpdateDnsRecordReply struct{}
-
-func (k *Kiwi) UpdateDnsRecord(args *KiwiUpdateDnsRecordArgs, reply *KiwiUpdateDnsRecordReply) error {
+func (k *Kiwi) UpdateDnsRecord(args *proto.KiwiUpdateDnsRecordArgs, reply *proto.KiwiUpdateDnsRecordReply) error {
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	value := strings.Join(args.Addresses, ",")
 	err := k.agent.dns.UpdateRecord(key, value)
 
-	*reply = KiwiUpdateDnsRecordReply{}
+	*reply = proto.KiwiUpdateDnsRecordReply{}
 	return err
 }
 
@@ -153,16 +113,10 @@ func (k *Kiwi) UpdateDnsRecord(args *KiwiUpdateDnsRecordArgs, reply *KiwiUpdateD
  * RPC DeleteDnsRecord()
  */
 
-type KiwiDeleteDnsRecordArgs struct {
-	Domain string
-	Entry  string
-}
-type KiwiDeleteDnsRecordReply struct{}
-
-func (k *Kiwi) DeleteDnsRecord(args *KiwiDeleteDnsRecordArgs, reply *KiwiDeleteDnsRecordReply) error {
+func (k *Kiwi) DeleteDnsRecord(args *proto.KiwiDeleteDnsRecordArgs, reply *proto.KiwiDeleteDnsRecordReply) error {
 	key := fmt.Sprintf("%s.%s.", args.Entry, args.Domain)
 	k.agent.dns.DeleteRecord(key)
 
-	*reply = KiwiDeleteDnsRecordReply{}
+	*reply = proto.KiwiDeleteDnsRecordReply{}
 	return nil
 }
