@@ -1,5 +1,8 @@
 ## unreleased (yyyy-mm-dd)
 
+## 0.64.1 (2025-12-30)
+* **NEW**: use external Kowabunga 'common' package.
+
 ## 0.64.0 (2025-12-30)
 * **BREAKING CHANGE**: deprecate complete OSX build (failed Ceph libraries dependency).
 * **NEW**: implemented public API **v0.53.2**.
