@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [ "$1" = configure ]; then
-    chown -R kahuna:kowabunga /etc/kowabunga
-    chmod 640 /etc/kowabunga/kahuna.yml
-fi
-
-exit 0

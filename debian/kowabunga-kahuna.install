@@ -1,5 +1,0 @@
-bin/kahuna                                              /usr/bin
-config/kahuna.yml                                       /etc/kowabunga
-config/templates/linux/*.yml                            /etc/kowabunga/templates/linux
-config/templates/windows/*.yml                          /etc/kowabunga/templates/windows
-debian/lib/systemd/system/kowabunga-kahuna.service      /lib/systemd/system

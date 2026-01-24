@@ -1,4 +1,0 @@
-# See EC2 metadata options
-instance-id: {{ .Hostname }}
-hostname: {{ .Hostname }}
-

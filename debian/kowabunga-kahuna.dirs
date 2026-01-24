@@ -1,5 +1,0 @@
-usr/bin
-etc/kowabunga
-etc/kowabunga/templates/linux
-etc/kowabunga/templates/windows
-lib/systemd/system
